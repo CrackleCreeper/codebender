@@ -11,6 +11,8 @@ class HackniteClient(discord.Client):
         intents.message_content = True
         super().__init__(intents=intents)
         self.commands = dict()
+        self.users_dict = dict()
+        self.guilds_dict = dict()
         self.categories = dict()
 
     async def on_ready(self):
@@ -54,16 +56,23 @@ class HackniteClient(discord.Client):
 
     async def run_command(self, message):
         if(message.content.startswith(prefix)):
-            name = message.content[1:]
+            parts = message.content[len(prefix):].split()
+            if not parts:
+                return
+
+            name = parts[0].lower()
+            args = parts[1:]
             if name.lower() in self.commands:
                 instance = self.commands[name.lower()]
                 if self.has_permissions(message.author, instance.user_permissions):
-                    await instance.run(message)
+                    expected_args = getattr(instance, 'number_args', 0)
+                    if len(args) == expected_args:
+                        await instance.run(message, args, self)
+                    else:
+                        await message.channel.send('Please enter all the arguments.')
                 else:
                     await message.channel.send('You are not allowed to use this command.')
 
     def has_permissions(self, member, required_perms):
         perms = member.guild_permissions
         return all(getattr(perms, perm, False) for perm in required_perms)
-
-
