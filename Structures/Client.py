@@ -60,13 +60,6 @@ class HackniteClient(discord.Client):
         await guild.create_text_channel(name = "air-battle", category = discord.utils.get(guild.categories, name = "Air Nation"), topic = "Air Nation battle grounds")
         await guild.create_text_channel(name = "no-mans-forest", category = discord.utils.get(guild.categories, name = "No Man's Land"), topic = "No Man's Land battle grounds")
 
-
-        guilds = self.guildsCollection.find_one({"_id": guild.id})
-        if guilds:
-            return
-        else:
-            self.guildsCollection.insert_one({"_id": guild.id, "visitor_list": []})
-
     async def load(self, path):
         print('Loading commands from: ' + path)
 

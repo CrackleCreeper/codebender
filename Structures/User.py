@@ -1,7 +1,7 @@
 import random
 
 class User:
-    def __init__(self, userID, client, pets = [], visitingGuild= None, money=0, level= 0, cosmetics = []):
+    def __init__(self, userID, client, pets = [], visitingGuild= None, money=100, level= 0, cosmetics = []):
         self.userID = userID
         self.visitingGuild = visitingGuild
         self.money = money
