@@ -28,7 +28,7 @@ class User:
         elif self.homeGuild == "Fire" : 
             self.pets = ["BasiliskCentipede"]
         
-        self.client.guildsCollection.update_one({"guildName": self.homeGuild}, {"$push": {"memberList": self.userID}})        
+        self.client.guildsCollection.update_one({"_id": self.homeGuild}, {"$push": {"members": self.userID}})
 
     def to_dict(self):
         return {
