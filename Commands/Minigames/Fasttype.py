@@ -36,7 +36,7 @@ class Fasttype:
         in_game.add(message.author.id)
 
         for round_num in range(25):
-            start_time = time.time()
+
 
             original_sentence = await self.fetch_sentence()
             original_sentence = original_sentence.lower().replace('.', '').replace(',', '')
@@ -45,6 +45,7 @@ class Fasttype:
             loading_msg = await message.channel.send("Generating a sentence, please wait...")
             await asyncio.sleep(1)
             await loading_msg.edit(content=f"**Write the following message (You have 15 seconds!)**:\n{displayed}")
+            start_time = time.time()
 
             def check(m):
                 return m.author.id == message.author.id and m.channel.id == message.channel.id
