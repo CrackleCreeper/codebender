@@ -23,7 +23,8 @@ class Join:
         self.user_permissions = []
 
     # The run function. Put your code in this.
-    # Here args is a list of arguments. Access them by their index as shown.
+    # Here args is a list of arguments. Access them by their index as shown.]
+
     async def run(self, message, args, client):
         user = client.usersCollection.find_one({"_id": message.author.id})
         if user:
