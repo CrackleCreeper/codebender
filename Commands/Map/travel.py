@@ -29,7 +29,8 @@ class travel:
                 return await message.channel.send(embed=Message(description=f"You are already here dumbfuck"))
             elif(target_guild == user["homeGuild"]):
                 member = message.guild.get_member(person)
-                await member.remove_roles(discord.utils.get(message.guild.roles, name=f"Visitor: {user["visitingGuild"]}"))
+                await member.remove_roles(discord.utils.get(message.guild.roles, name=f"Visitor: {user["visitingGuild"]}"))            
+                await member.remove_roles(discord.utils.get(message.guild.roles, name=f"{user["visitingGuild"]}"))
                 client.guildsCollection.update_one({"_id": user["visitingGuild"]}, {"$pull":{"visitors" : person}})
                 client.usersCollection.update_one({"_id" : person},{"$set" :{"money" : coins - 400, "visitingGuild": target_guild}})
                 await message.channel.send(embed=Message(description=f"Welcome back home!"))
@@ -38,6 +39,8 @@ class travel:
                 client.guildsCollection.update_one({"_id": user["visitingGuild"]}, {"$pull":{"visitors" : person}})
                 member = message.guild.get_member(person)
                 await member.remove_roles(discord.utils.get(message.guild.roles, name=f"Visitor: {user["visitingGuild"]}"))
+                await member.remove_roles(discord.utils.get(message.guild.roles, name=f"{user["visitingGuild"]}"))
+
             client.guildsCollection.update_one({"_id": target_guild}, {"$push":{"visitors" : person}})
             client.usersCollection.update_one({"_id" : person},{"$set" :{"money" : coins - 400, "visitingGuild": target_guild}})
             
