@@ -32,33 +32,55 @@ class HackniteClient(discord.Client):
             return
         await self.run_command(message)
 
+
     async def on_guild_join(self, guild):
-        await guild.create_role(name = "Visitor: Water", colour = discord.Colour.blue())
-        await guild.create_role(name = "Visitor: Fire", colour = discord.Colour.red())
-        await guild.create_role(name = "Visitor: Earth", colour = discord.Colour.green())
-        await guild.create_role(name = "Visitor: Air", colour = discord.Colour.yellow())
+        # === Create Visitor Roles ===
+        visitor_water = await guild.create_role(name="Visitor: Water", colour=discord.Colour.blue())
+        visitor_fire = await guild.create_role(name="Visitor: Fire", colour=discord.Colour.red())
+        visitor_earth = await guild.create_role(name="Visitor: Earth", colour=discord.Colour.green())
+        visitor_air = await guild.create_role(name="Visitor: Air", colour=discord.Colour.yellow())
 
-        await guild.create_role(name = "Water", colour = discord.Colour.dark_blue())
-        await guild.create_role(name = "Fire", colour = discord.Colour.dark_red())
-        await guild.create_role(name = "Earth", colour = discord.Colour.dark_green())
-        await guild.create_role(name = "Air", colour = discord.Colour.dark_gold())
+        # === Create Nation Roles ===
+        water_role = await guild.create_role(name="Water", colour=discord.Colour.dark_blue())
+        fire_role = await guild.create_role(name="Fire", colour=discord.Colour.dark_red())
+        earth_role = await guild.create_role(name="Earth", colour=discord.Colour.dark_green())
+        air_role = await guild.create_role(name="Air", colour=discord.Colour.dark_gold())
 
-        await guild.create_category(name = "Water Nation")
-        await guild.create_category(name = "Fire Nation")
-        await guild.create_category(name = "Earth Nation")
-        await guild.create_category(name = "Air Nation")
-        await guild.create_category(name = "No Man's Land")
+        # === Create Categories ===
+        water_cat = await guild.create_category(name="Water Nation")
+        fire_cat = await guild.create_category(name="Fire Nation")
+        earth_cat = await guild.create_category(name="Earth Nation")
+        air_cat = await guild.create_category(name="Air Nation")
+        nomans_cat = await guild.create_category(name="No Man's Land")
 
-        await guild.create_text_channel(name = "fire-general", category = discord.utils.get(guild.categories, name = "Fire Nation"))
-        await guild.create_text_channel(name = "water-general", category = discord.utils.get(guild.categories, name = "Water Nation"))
-        await guild.create_text_channel(name = "earth-general", category = discord.utils.get(guild.categories, name = "Earth Nation"))
-        await guild.create_text_channel(name = "air-general", category = discord.utils.get(guild.categories, name = "Air Nation"))
+        def overwrites(roles_to_overwrite = []):
+            overwrites_dict = {
+                guild.default_role: discord.PermissionOverwrite(view_channel=False),
+                self.user: discord.PermissionOverwrite(view_channel=True),
+                guild.me: discord.PermissionOverwrite(view_channel=True)
+            }
+            for role in roles_to_overwrite:
+                overwrites_dict[role] = discord.PermissionOverwrite(view_channel=True)
+            return overwrites_dict
+        
+        # === Create Channels ===
+        fire_general   = await guild.create_text_channel(name="fire-general", category=fire_cat)
+        water_general  = await guild.create_text_channel(name="water-general", category=water_cat)
+        earth_general  = await guild.create_text_channel(name="earth-general", category=earth_cat)
+        air_general    = await guild.create_text_channel(name="air-general", category=air_cat)
 
-        await guild.create_text_channel(name = "fire-battle", category = discord.utils.get(guild.categories, name = "Fire Nation"), topic = "Fire Nation battle grounds")
-        await guild.create_text_channel(name = "water-battle", category = discord.utils.get(guild.categories, name = "Water Nation"), topic = "Water Nation battle grounds")
-        await guild.create_text_channel(name = "earth-battle", category = discord.utils.get(guild.categories, name = "Earth Nation"), topic = "Earth Nation battle grounds")
-        await guild.create_text_channel(name = "air-battle", category = discord.utils.get(guild.categories, name = "Air Nation"), topic = "Air Nation battle grounds")
-        await guild.create_text_channel(name = "no-mans-forest", category = discord.utils.get(guild.categories, name = "No Man's Land"), topic = "No Man's Land battle grounds")
+        fire_battle    = await guild.create_text_channel(name="fire-battle", category=fire_cat, topic="Fire Nation battle grounds", overwrites=overwrites([fire_role, visitor_fire]))
+        water_battle   = await guild.create_text_channel(name="water-battle", category=water_cat, topic="Water Nation battle grounds", overwrites=overwrites([water_role, visitor_water]))
+        earth_battle   = await guild.create_text_channel(name="earth-battle", category=earth_cat, topic="Earth Nation battle grounds", overwrites=overwrites([earth_role, visitor_earth]))
+        air_battle     = await guild.create_text_channel(name="air-battle", category=air_cat, topic="Air Nation battle grounds", overwrites=overwrites([air_role, visitor_air]))
+        no_mans        = await guild.create_text_channel(name="no-mans-forest", category=nomans_cat, topic="No Man's Land battle grounds")
+
+        await guild.create_text_channel("water-private-channel", category=water_cat, overwrites=overwrites([water_role]))
+        await guild.create_text_channel("fire-private-channel", category=fire_cat, overwrites=overwrites([fire_role]))
+        await guild.create_text_channel("earth-private-channel", category=earth_cat, overwrites=overwrites([earth_role]))
+        await guild.create_text_channel("air-private-channel", category=air_cat, overwrites=overwrites([air_role]))  
+
+
 
     async def load(self, path):
         print('Loading commands from: ' + path)
@@ -89,6 +111,9 @@ class HackniteClient(discord.Client):
                         print(f'Loaded command: {class_name} in category: {category}')
                     else:
                         print(f'Failed to load class {class_name} from {file}')
+
+
+
 
     async def run_command(self, message):
         if(message.content.startswith(prefix)):
