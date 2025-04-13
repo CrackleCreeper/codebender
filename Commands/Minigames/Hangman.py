@@ -10,6 +10,7 @@ class Hangman:
         self.number_args = 0
         self.user_permissions = []
 
+        self.in_game = set()
         self.used_letters = []
         self.correct_letters = []
         self.stages = [
@@ -108,12 +109,14 @@ class Hangman:
         await message.channel.send(new_msg)
 
     async def run(self, message, args, client):
+        if message.author.id in self.in_game:
+            return await message.channel.send('You are already in a game.')
+        else:
+            self.in_game.add(message.author.id)
         word = await self.get_word()
         stage = 0
         print(word)
         self.correct_letters = ["_"] * len(word)
-
-
 
         while True:
             await self.display_message(stage, message, word)
