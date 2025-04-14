@@ -10,7 +10,7 @@ from wand.color import Color
 import asyncio
 
 chess_games = {}
-
+win_amount = 100
 class Chess:
     def __init__(self):
         self.name = "chessguess"
@@ -22,7 +22,7 @@ class Chess:
     def get_random_tactical_position(self, depth=12, min_cp_diff=100):
         stockfish_path = os.path.join(os.path.dirname(__file__), "stockfish.exe")
 
-        for _ in range(20):  # Try up to 20 different positions
+        for _ in range(20):
             board = chess.Board()
             for _ in range(random.randint(8, 20)):
                 if board.is_game_over():
@@ -35,19 +35,18 @@ class Chess:
                 analysis = engine.analyse(board, chess.engine.Limit(depth=depth), multipv=2)
                 engine.quit()
 
-                # multipv returns top 2 moves
                 top1 = analysis[0]["pv"][0]
                 top2 = analysis[1]["pv"][0]
                 score1 = analysis[0]["score"].relative.score(mate_score=10000) or 0
                 score2 = analysis[1]["score"].relative.score(mate_score=10000) or 0
 
                 if abs(score1 - score2) >= min_cp_diff:
-                    return board  # Accept this tactical position
+                    return board
 
             except Exception as e:
                 print("Error while analyzing board:", e)
 
-        return chess.Board()  # fallback if no good position found
+        return chess.Board()
 
     def get_random_position(self):
         return self.get_random_tactical_position()
@@ -74,7 +73,7 @@ class Chess:
         board = self.get_random_position()
         best_move = self.get_best_move(board)
         chess_games[message.author.id] = (board, best_move)
-
+        print(best_move)
         image_path = os.path.join(os.path.dirname(__file__), "board.png")
         self.save_board_as_png(board, filename=image_path)
 
@@ -110,7 +109,8 @@ class Chess:
                     continue
 
                 if user_move == best_move:
-                    await message.channel.send("✅ Correct! That’s the best move!")
+                    await message.channel.send(f"✅ Correct! That’s the best move! You got {win_amount} coins!")
+                    client.usersCollection.update_one({"_id": message.author.id}, {"$inc": {"money": win_amount}})
                 else:
                     await message.channel.send(f"❌ Not quite. That was a legal move, but the best move was **{board.san(best_move)}**")
                 break

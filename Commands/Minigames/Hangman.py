@@ -2,6 +2,7 @@ from Structures.Message import Message
 import discord
 import asyncio
 import aiohttp
+win_amount = 100
 class Hangman:
     def __init__(self):
         self.name = "hangman"
@@ -94,6 +95,7 @@ class Hangman:
 ]
 
 
+
     async def get_word(self):
         async with aiohttp.ClientSession() as session:
             async with session.get("https://random-word-api.herokuapp.com/word?number=1") as resp:
@@ -154,7 +156,8 @@ class Hangman:
 
 
             if "_" not in self.correct_letters:
-                await message.channel.send("You won!")
+                await message.channel.send(f"You won! You got {win_amount} coins!")
+                client.usersCollection.update_one({"_id": message.author.id}, {"$inc": {"money": win_amount}})
                 self.used_letters = []
                 self.correct_letters = []
                 break

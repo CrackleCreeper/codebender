@@ -5,7 +5,7 @@ import aiohttp
 import time
 
 in_game = set()
-
+win_amount = 25
 
 class Fasttype:
 
@@ -44,14 +44,14 @@ class Fasttype:
 
             loading_msg = await message.channel.send("Generating a sentence, please wait...")
             await asyncio.sleep(1)
-            await loading_msg.edit(content=f"**Write the following message (You have 15 seconds!)**:\n{displayed}")
+            await loading_msg.edit(content=f"**Write the following message (You have 20 seconds!)**:\n{displayed}")
             start_time = time.time()
 
             def check(m):
                 return m.author.id == message.author.id and m.channel.id == message.channel.id
 
             try:
-                msg = await client.wait_for('message', check=check, timeout=15.0)
+                msg = await client.wait_for('message', check=check, timeout=20.0)
             except asyncio.TimeoutError:
                 await message.channel.send("⏰ Time's up!")
                 in_game.remove(message.author.id)
@@ -65,13 +65,14 @@ class Fasttype:
 
             if user_input == original_sentence:
                 elapsed = round(time.time() - start_time, 2)
-                await message.channel.send(f"✅ Good job!\nYou typed it in **{elapsed} seconds**!")
+                await message.channel.send(f"✅ Good job!\nYou typed it in **{elapsed} seconds**! You got {win_amount* (round_num + 1)} coins! ")
+                client.usersCollection.update_one({"_id": message.author.id}, {"$inc": {"money": win_amount * (round_num + 1)}})
             else:
                 await message.channel.send("❌ You failed!")
                 in_game.remove(message.author.id)
                 break
 
-            if round_num == 24:
+            if round_num == 25:
                 await message.channel.send("🎉 GG! You win all 25 rounds!")
                 in_game.remove(message.author.id)
                 break
