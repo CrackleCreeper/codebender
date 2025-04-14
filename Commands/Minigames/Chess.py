@@ -19,14 +19,39 @@ class Chess:
         self.number_args = 0
         self.user_permissions = []
 
+    def get_random_tactical_position(self, depth=12, min_cp_diff=100):
+        stockfish_path = os.path.join(os.path.dirname(__file__), "stockfish.exe")
+
+        for _ in range(20):  # Try up to 20 different positions
+            board = chess.Board()
+            for _ in range(random.randint(8, 20)):
+                if board.is_game_over():
+                    break
+                move = random.choice(list(board.legal_moves))
+                board.push(move)
+
+            try:
+                engine = chess.engine.SimpleEngine.popen_uci(stockfish_path)
+                analysis = engine.analyse(board, chess.engine.Limit(depth=depth), multipv=2)
+                engine.quit()
+
+                # multipv returns top 2 moves
+                top1 = analysis[0]["pv"][0]
+                top2 = analysis[1]["pv"][0]
+                score1 = analysis[0]["score"].relative.score(mate_score=10000) or 0
+                score2 = analysis[1]["score"].relative.score(mate_score=10000) or 0
+
+                if abs(score1 - score2) >= min_cp_diff:
+                    return board  # Accept this tactical position
+
+            except Exception as e:
+                print("Error while analyzing board:", e)
+
+        return chess.Board()  # fallback if no good position found
+
     def get_random_position(self):
-        board = chess.Board()
-        for _ in range(random.randint(8, 20)):
-            if board.is_game_over():
-                break
-            move = random.choice(list(board.legal_moves))
-            board.push(move)
-        return board
+        return self.get_random_tactical_position()
+
 
     def get_best_move(self, board):
         stockfish_path = os.path.join(os.path.dirname(__file__), "stockfish.exe")
