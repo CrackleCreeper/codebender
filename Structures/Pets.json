@@ -221,11 +221,38 @@
     ],
     "air": [
         {
-            "name": "Ring-Tailed Winged Lemur",
+            "name": "Kitten Moth",
             "type": "Air",
             "level": 1,
             "xp": 0,
             "rarity": "common",
+            "base_hp": 27,
+            "attack": 10,
+            "defense": 6,
+            "moves": [
+                {
+                    "name": "Kitty Claws",
+                    "type": "Air",
+                    "power": 9
+                },
+                {
+                    "name": "Moth Flame",
+                    "type": "Air",
+                    "power": 10
+                },
+                {
+                    "name": "Spin",
+                    "type": "Air",
+                    "power": 11
+                }
+            ]
+        },
+        {
+            "name": "Ring-Tailed Winged Lemur",
+            "type": "Air",
+            "level": 1,
+            "xp": 0,
+            "rarity": "rare",
             "base_hp": 28,
             "attack": 10,
             "defense": 8,
@@ -252,7 +279,7 @@
             "type": "Air",
             "level": 1,
             "xp": 0,
-            "rarity": "rare",
+            "rarity": "epic",
             "base_hp": 27,
             "attack": 12,
             "defense": 6,
@@ -385,7 +412,7 @@
             ]
         },
         {
-            "name": "Sturgeon",
+            "name": "Shirshu",
             "type": "Earth",
             "level": 1,
             "xp": 0,
