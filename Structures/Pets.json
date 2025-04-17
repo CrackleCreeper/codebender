@@ -1,0 +1,415 @@
+{
+    "fire": [
+        {
+            "name": "Basilisk Centipede",
+            "type": "Fire",
+            "level": 1,
+            "xp": 0,
+            "rarity": "common",
+            "base_hp": 30,
+            "attack": 14,
+            "defense": 6,
+            "moves": [
+                {
+                    "name": "Scorch Bite",
+                    "type": "Fire",
+                    "power": 12
+                },
+                {
+                    "name": "Lava Skitter",
+                    "type": "Fire",
+                    "power": 10
+                },
+                {
+                    "name": "Venom Tail",
+                    "type": "Fire",
+                    "power": 11
+                }
+            ]
+        },
+        {
+            "name": "Komodo Rhino",
+            "type": "Fire",
+            "level": 1,
+            "xp": 0,
+            "rarity": "rare",
+            "base_hp": 35,
+            "attack": 16,
+            "defense": 5,
+            "moves": [
+                {
+                    "name": "Horn Bash",
+                    "type": "Fire",
+                    "power": 14
+                },
+                {
+                    "name": "Ember Charge",
+                    "type": "Fire",
+                    "power": 12
+                },
+                {
+                    "name": "Crater Stomp",
+                    "type": "Fire",
+                    "power": 13
+                }
+            ]
+        },
+        {
+            "name": "Phoenix",
+            "type": "Fire",
+            "level": 1,
+            "xp": 0,
+            "rarity": "epic",
+            "base_hp": 28,
+            "attack": 12,
+            "defense": 7,
+            "moves": [
+                {
+                    "name": "Blazing Talon",
+                    "type": "Fire",
+                    "power": 14
+                },
+                {
+                    "name": "Sky Flame",
+                    "type": "Fire",
+                    "power": 13
+                },
+                {
+                    "name": "Ash Dive",
+                    "type": "Fire",
+                    "power": 15
+                }
+            ]
+        },
+        {
+            "name": "Dragon",
+            "type": "Fire",
+            "level": 1,
+            "xp": 0,
+            "rarity": "legendary",
+            "base_hp": 40,
+            "attack": 18,
+            "defense": 9,
+            "moves": [
+                {
+                    "name": "Inferno Blast",
+                    "type": "Fire",
+                    "power": 18
+                },
+                {
+                    "name": "Molten Claw",
+                    "type": "Fire",
+                    "power": 16
+                },
+                {
+                    "name": "Dragon Roar",
+                    "type": "Fire",
+                    "power": 17
+                }
+            ]
+        }
+    ],
+    "water": [
+        {
+            "name": "Koala Otter",
+            "type": "Water",
+            "level": 1,
+            "xp": 0,
+            "rarity": "common",
+            "base_hp": 32,
+            "attack": 10,
+            "defense": 12,
+            "moves": [
+                {
+                    "name": "Splash Swipe",
+                    "type": "Water",
+                    "power": 10
+                },
+                {
+                    "name": "Bubble Slam",
+                    "type": "Water",
+                    "power": 9
+                },
+                {
+                    "name": "Ripple Hit",
+                    "type": "Water",
+                    "power": 11
+                }
+            ]
+        },
+        {
+            "name": "Dolphin Piranha",
+            "type": "Water",
+            "level": 1,
+            "xp": 0,
+            "rarity": "rare",
+            "base_hp": 30,
+            "attack": 14,
+            "defense": 9,
+            "moves": [
+                {
+                    "name": "Rip Tide",
+                    "type": "Water",
+                    "power": 14
+                },
+                {
+                    "name": "Aqua Lunge",
+                    "type": "Water",
+                    "power": 13
+                },
+                {
+                    "name": "Frenzy Bite",
+                    "type": "Water",
+                    "power": 15
+                }
+            ]
+        },
+        {
+            "name": "Tiger Shark",
+            "type": "Water",
+            "level": 1,
+            "xp": 0,
+            "rarity": "epic",
+            "base_hp": 35,
+            "attack": 16,
+            "defense": 7,
+            "moves": [
+                {
+                    "name": "Blood Lunge",
+                    "type": "Water",
+                    "power": 16
+                },
+                {
+                    "name": "Wave Slash",
+                    "type": "Water",
+                    "power": 14
+                },
+                {
+                    "name": "Abyssal Strike",
+                    "type": "Water",
+                    "power": 15
+                }
+            ]
+        },
+        {
+            "name": "Kraken",
+            "type": "Water",
+            "level": 1,
+            "xp": 0,
+            "rarity": "legendary",
+            "base_hp": 40,
+            "attack": 17,
+            "defense": 11,
+            "moves": [
+                {
+                    "name": "Tentacle Slam",
+                    "type": "Water",
+                    "power": 17
+                },
+                {
+                    "name": "Depth Surge",
+                    "type": "Water",
+                    "power": 18
+                },
+                {
+                    "name": "Maelstrom Whip",
+                    "type": "Water",
+                    "power": 19
+                }
+            ]
+        }
+    ],
+    "air": [
+        {
+            "name": "Ring-Tailed Winged Lemur",
+            "type": "Air",
+            "level": 1,
+            "xp": 0,
+            "rarity": "common",
+            "base_hp": 28,
+            "attack": 10,
+            "defense": 8,
+            "moves": [
+                {
+                    "name": "Whirlwind Tail",
+                    "type": "Air",
+                    "power": 9
+                },
+                {
+                    "name": "Glide Kick",
+                    "type": "Air",
+                    "power": 10
+                },
+                {
+                    "name": "Breeze Strike",
+                    "type": "Air",
+                    "power": 11
+                }
+            ]
+        },
+        {
+            "name": "Spider Bat",
+            "type": "Air",
+            "level": 1,
+            "xp": 0,
+            "rarity": "rare",
+            "base_hp": 27,
+            "attack": 12,
+            "defense": 6,
+            "moves": [
+                {
+                    "name": "Echo Screech",
+                    "type": "Air",
+                    "power": 12
+                },
+                {
+                    "name": "Web Dive",
+                    "type": "Air",
+                    "power": 13
+                },
+                {
+                    "name": "Aerial Bite",
+                    "type": "Air",
+                    "power": 14
+                }
+            ]
+        },
+        {
+            "name": "Flying Bison",
+            "type": "Air",
+            "level": 1,
+            "xp": 0,
+            "rarity": "legendary",
+            "base_hp": 38,
+            "attack": 14,
+            "defense": 10,
+            "moves": [
+                {
+                    "name": "Air Slam",
+                    "type": "Air",
+                    "power": 17
+                },
+                {
+                    "name": "Cloud Charge",
+                    "type": "Air",
+                    "power": 18
+                },
+                {
+                    "name": "Wind Crush",
+                    "type": "Air",
+                    "power": 16
+                }
+            ]
+        }
+    ],
+    "earth": [
+        {
+            "name": "Crococat",
+            "type": "Earth",
+            "level": 1,
+            "xp": 0,
+            "rarity": "common",
+            "base_hp": 32,
+            "attack": 13,
+            "defense": 11,
+            "moves": [
+                {
+                    "name": "Stone Swipe",
+                    "type": "Earth",
+                    "power": 10
+                },
+                {
+                    "name": "Mud Bash",
+                    "type": "Earth",
+                    "power": 11
+                },
+                {
+                    "name": "Rock Lunge",
+                    "type": "Earth",
+                    "power": 12
+                }
+            ]
+        },
+        {
+            "name": "Eel Sand Shark",
+            "type": "Earth",
+            "level": 1,
+            "xp": 0,
+            "rarity": "rare",
+            "base_hp": 34,
+            "attack": 15,
+            "defense": 9,
+            "moves": [
+                {
+                    "name": "Quicksand Snap",
+                    "type": "Earth",
+                    "power": 13
+                },
+                {
+                    "name": "Burrow Strike",
+                    "type": "Earth",
+                    "power": 14
+                },
+                {
+                    "name": "Dust Claw",
+                    "type": "Earth",
+                    "power": 15
+                }
+            ]
+        },
+        {
+            "name": "Spider Snake",
+            "type": "Earth",
+            "level": 1,
+            "xp": 0,
+            "rarity": "epic",
+            "base_hp": 30,
+            "attack": 12,
+            "defense": 10,
+            "moves": [
+                {
+                    "name": "Venom Crush",
+                    "type": "Earth",
+                    "power": 12
+                },
+                {
+                    "name": "Ground Coil",
+                    "type": "Earth",
+                    "power": 13
+                },
+                {
+                    "name": "Cave Bite",
+                    "type": "Earth",
+                    "power": 14
+                }
+            ]
+        },
+        {
+            "name": "Sturgeon",
+            "type": "Earth",
+            "level": 1,
+            "xp": 0,
+            "rarity": "legendary",
+            "base_hp": 36,
+            "attack": 13,
+            "defense": 12,
+            "moves": [
+                {
+                    "name": "Rock Slam",
+                    "type": "Earth",
+                    "power": 16
+                },
+                {
+                    "name": "Boulder Barrage",
+                    "type": "Earth",
+                    "power": 17
+                },
+                {
+                    "name": "Iron Fin",
+                    "type": "Earth",
+                    "power": 18
+                }
+            ]
+        }
+    ]
+}
