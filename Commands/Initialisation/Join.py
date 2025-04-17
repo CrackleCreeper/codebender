@@ -36,7 +36,7 @@ class Join:
                 return await message.channel.send(embed=Message(description=f"You are already a member of {user['homeGuild']} Nation'!"))
         newUser = User(message.author.id, client)
         client.usersCollection.insert_one(newUser.to_dict())
-        await message.channel.send(embed=Message(title="Welcome",description=f"<@{message.author.id}>, the {newUser.homeGuild} Nation welcomes you! We hope you enjoy your journey with your first companion, your very own {newUser.pets[0]}"))
+        await message.channel.send(embed=Message(title="Welcome",description=f"<@{message.author.id}>, the {newUser.homeGuild} Nation welcomes you! We hope you enjoy your journey with your first companion, your very own {newUser.pets[0]["name"]}"))
 
         role = discord.utils.get(message.guild.roles, name=f"{newUser.homeGuild}")
         if role:
