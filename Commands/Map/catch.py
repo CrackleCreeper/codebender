@@ -2,6 +2,7 @@ from Structures.Message import Message
 import discord
 from discord.ext import commands
 from Commands.Map.travel import travel
+from datetime import datetime, timedelta
 
 class catch:
     def __init__(self):
@@ -29,6 +30,10 @@ class catch:
             return
         if hunter == prey:
             if prey["is_sneaking"] == "true":
+                guild = client.guildsCollection.find_one({"_id": prey["visitingGuild"]})
+                print(guild)
+                ban_expiry = datetime.utcnow() + timedelta(days=3)
+                client.guildsCollection.update_one({"_id" : prey["visitingGuild"]}, {"$set":{f"sneak_bans.{message.mentions[0].id}": ban_expiry}})
                 await message.channel.send(embed=Message(
                     description=(
                         "**Self-Report?!**\n"
@@ -61,6 +66,8 @@ class catch:
                 color=discord.Color.green()
             ))
         else:
+            ban_expiry = datetime.utcnow() + timedelta(days=3)
+            client.guildsCollection.update_one({"_id": prey["visitingGuild"]},{"$set": {f"sneak_bans.{message.mentions[0].id}": ban_expiry}})
             await message.channel.send(embed=Message(
                 description=(
                     "🔴 **Fugitive Caught!**\n"

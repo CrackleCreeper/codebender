@@ -1,6 +1,8 @@
 from Structures.Message import Message
 import discord
 from discord.ext import commands
+from datetime import datetime, timedelta
+
 
 class sneak:
     def __init__(self):
@@ -14,7 +16,7 @@ class sneak:
         guilds = ["Fire", "Water", "Air", "Earth"]
         person = message.author.id
         target_guild = args[0].lower().capitalize()
-
+        target = client.guildsCollection.find_one({"_id": target_guild})
         user = client.usersCollection.find_one({"_id": person})
         if not user:
             return await message.channel.send(embed=Message(description="❌ **User not found in database.**"))
@@ -26,6 +28,8 @@ class sneak:
         if coins < 80:
             return await message.channel.send(embed=Message(description="💸 **You don't have enough money to sneak!**"))
 
+        if person in target["sneak_bans"] and target["sneak_bans"][person] <= datetime.utcnow:
+            return await message.channel.send(embed = Message(description = f'You are banned from this guild for {target_guild["sneak_bans"][person]-datetime.utcnow} days'))
         if user["visitingGuild"] == target_guild:
             return await message.channel.send(embed=Message(description=" **You're already in that guild.**"))
 
