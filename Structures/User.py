@@ -3,9 +3,8 @@ import json
 with open("./Structures/Pets.json", "r") as f:
     pets = json.load(f)
 class User:
-    def __init__(self, userID, client, visitingGuild= None, money=100, level= 0, cosmetics = []):
+    def __init__(self, userID, client, money=100, level= 0, cosmetics = []):
         self.userID = userID
-        self.visitingGuild = visitingGuild
         self.money = money
         self.pets = []
         self.level = level
@@ -22,7 +21,7 @@ class User:
             self.homeGuild = "Water"
         elif guildNo == 4 : 
             self.homeGuild = "Fire"
-        print(pets)
+
         if self.homeGuild == "Earth" : 
             self.pets.append(pets["earth"][0])
         elif self.homeGuild == "Air" : 
@@ -33,7 +32,7 @@ class User:
             self.pets.append(pets["fire"][0])
         
         self.client.guildsCollection.update_one({"_id": self.homeGuild}, {"$push": {"members": self.userID}})
-
+        self.visitingGuild = self.homeGuild
     def to_dict(self):
         return {
             "_id": self.userID,
