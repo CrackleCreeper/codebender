@@ -74,15 +74,18 @@ shop_data_earth = {
     ]
 }
 
-# Function to create an embed from shop tier
 def create_shop_embed(tier, shop_data, userShop):
     embed = discord.Embed(
         title=f"{tier} Shop Tier | {userShop}",
-        description=f"Items available in the *{tier}* tier",
+        description=f"Items available in the {tier} tier.\nUse the Item ID to purchase items using the command: !buy <itemID>",
         color=discord.Color.gold() if tier == "Legendary" else discord.Color.blue()
     )
     for item in shop_data[tier]:
-        embed.add_field(name=item["name"], value=f"💰 {item['price']} coins", inline=False)
+        embed.add_field(
+            name=item["name"],
+            value=f"💰 {item['price']} coins\n🆔 Item ID: {item['itemID']}",
+            inline=False
+        )
     return embed
 
 # Custom view with buttons to navigate tiers
@@ -111,7 +114,6 @@ class Shop:
     def __init__(self):
         # The command name. In this case this command will run when you type !test
         self.name = "shop"
-
         # Category of the command. Preferably the name of the folder this file is in.
         self.category = "Currency"
 
@@ -129,7 +131,8 @@ class Shop:
     async def run(self, message, args, client):
         userID = message.author.id
         user = client.usersCollection.find_one({"_id": userID})
-        
+        if not user:
+            return await message.channel.send(embed=Message(description="Please  use !join before using this command."))
         if (user['visitingGuild'] == "Fire" and user['is_sneaking']) or (user['homeGuild'] == "Fire" and not user['is_sneaking']):
             userShop = "Fire Shop"
             view = ShopView(shop_data_fire, userShop)
