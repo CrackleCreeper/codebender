@@ -30,8 +30,6 @@ class catch:
             return
         if hunter == prey:
             if prey["is_sneaking"] == "true":
-                guild = client.guildsCollection.find_one({"_id": prey["visitingGuild"]})
-                print(guild)
                 ban_expiry = datetime.utcnow() + timedelta(days=3)
                 client.guildsCollection.update_one({"_id" : prey["visitingGuild"]}, {"$set":{f"sneak_bans.{message.mentions[0].id}": ban_expiry}})
                 await message.channel.send(embed=Message(
@@ -45,9 +43,9 @@ class catch:
                 if(prey["money"] < 400):
                     client.usersCollection.update_one({"_id": message.mentions[0].id}, {"$set":{"money":400}})
                 travel_cmd = travel()
-                await travel_cmd.run(message, [prey["homeGuild"]], client)
+                return await travel_cmd.run(message, [prey["homeGuild"]], client)
             else:
-                await message.channel.send(embed=Message(
+                return await message.channel.send(embed=Message(
                     description=(
                         " **Suspicious Behavior**\n"
                         "You're reporting yourself for... nothing?\n"
@@ -55,25 +53,31 @@ class catch:
                     ),
                     color= discord.Color.green()
                 ))
-        elif prey["homeGuild"] == prey["visitingGuild"]:
-            await message.channel.send(embed=Message(
-                description="🔵 **Guild Member Detected!**\nThis person is part of your guild.",
-                color=discord.Color.blue()
-            ))
-        elif prey["is_sneaking"] == "false":
-            await message.channel.send(embed=Message(
-                description="🟢 **Legal Entry**\nThis person has travelled into your guild legally.",
-                color=discord.Color.green()
-            ))
+        if(hunter["homeGuild"] == hunter["visitingGuild"] and hunter["homeGuild"] == prey["visitingGuild"]):
+            if prey["homeGuild"] == prey["visitingGuild"]:
+                await message.channel.send(embed=Message(
+                    description="🔵 **Guild Member Detected!**\nThis person is part of your guild.",
+                    color=discord.Color.blue()
+                ))
+            elif prey["is_sneaking"] == "false":
+                await message.channel.send(embed=Message(
+                    description="🟢 **Legal Entry**\nThis person has travelled into your guild legally.",
+                    color=discord.Color.green()
+                ))
+            else:
+                ban_expiry = datetime.utcnow() + timedelta(days=3)
+                client.guildsCollection.update_one({"_id": prey["visitingGuild"]},{"$set": {f"sneak_bans.{message.mentions[0].id}": ban_expiry}})
+                await message.channel.send(embed=Message(
+                    description=(
+                        "🔴 **Fugitive Caught!**\n"
+                        "You have caught someone sneaking into your guild!\n\n"
+                        "💥 Beat them in a battle to claim a reward, or\n"
+                        "💰 Pay their travelling fee to let them go."
+                    ),
+                    color=discord.Color.red()
+                ))
         else:
-            ban_expiry = datetime.utcnow() + timedelta(days=3)
-            client.guildsCollection.update_one({"_id": prey["visitingGuild"]},{"$set": {f"sneak_bans.{message.mentions[0].id}": ban_expiry}})
-            await message.channel.send(embed=Message(
-                description=(
-                    "🔴 **Fugitive Caught!**\n"
-                    "You have caught someone sneaking into your guild!\n\n"
-                    "💥 Beat them in a battle to claim a reward, or\n"
-                    "💰 Pay their travelling fee to let them go."
-                ),
-                color=discord.Color.red()
-            ))
+            return await message.channel.send(embed=Message(
+                        description="🧐 **There's no one to catch!**\nThat member isn't sneaking into your guild, or they're off lurking somewhere else. Keep your eyes peeled!",
+                        color=discord.Color.orange()
+                    ))

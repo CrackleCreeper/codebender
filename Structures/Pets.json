@@ -9,6 +9,7 @@
             "base_hp": 30,
             "attack": 14,
             "defense": 6,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Scorch Bite",
@@ -36,6 +37,7 @@
             "base_hp": 35,
             "attack": 16,
             "defense": 5,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Horn Bash",
@@ -63,6 +65,7 @@
             "base_hp": 28,
             "attack": 12,
             "defense": 7,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Blazing Talon",
@@ -90,6 +93,7 @@
             "base_hp": 40,
             "attack": 18,
             "defense": 9,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Inferno Blast",
@@ -119,6 +123,7 @@
             "base_hp": 32,
             "attack": 10,
             "defense": 12,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Splash Swipe",
@@ -146,6 +151,7 @@
             "base_hp": 30,
             "attack": 14,
             "defense": 9,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Rip Tide",
@@ -173,6 +179,7 @@
             "base_hp": 35,
             "attack": 16,
             "defense": 7,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Blood Lunge",
@@ -200,6 +207,7 @@
             "base_hp": 40,
             "attack": 17,
             "defense": 11,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Tentacle Slam",
@@ -229,6 +237,7 @@
             "base_hp": 27,
             "attack": 10,
             "defense": 6,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Kitty Claws",
@@ -256,6 +265,7 @@
             "base_hp": 28,
             "attack": 10,
             "defense": 8,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Whirlwind Tail",
@@ -283,6 +293,7 @@
             "base_hp": 27,
             "attack": 12,
             "defense": 6,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Echo Screech",
@@ -310,6 +321,7 @@
             "base_hp": 38,
             "attack": 14,
             "defense": 10,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Air Slam",
@@ -339,6 +351,7 @@
             "base_hp": 32,
             "attack": 13,
             "defense": 11,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Stone Swipe",
@@ -366,6 +379,7 @@
             "base_hp": 34,
             "attack": 15,
             "defense": 9,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Quicksand Snap",
@@ -393,6 +407,7 @@
             "base_hp": 30,
             "attack": 12,
             "defense": 10,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Venom Crush",
@@ -420,6 +435,7 @@
             "base_hp": 36,
             "attack": 13,
             "defense": 12,
+            "speed": 10,
             "moves": [
                 {
                     "name": "Rock Slam",

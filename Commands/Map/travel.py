@@ -1,6 +1,7 @@
 from Structures.Message import Message
 import discord
 from discord.ext import commands
+from datetime import datetime, timedelta
 
 class travel:
     def __init__(self):
@@ -14,7 +15,7 @@ class travel:
         guilds = ["Fire", "Water", "Air", "Earth"]
         person = message.author.id
         target_guild = args[0].lower().capitalize()
-
+        target = client.guildsCollection.find_one({"_id": target_guild})
         user = client.usersCollection.find_one({"_id": person})
         if not user:
             return await message.channel.send(embed=Message(description="❌ **User not found in database.**"))
@@ -29,6 +30,11 @@ class travel:
         if user["visitingGuild"] == target_guild:
             return await message.channel.send(embed=Message(description=" **You're already here, traveler.**"))
 
+        if str(person) in target.get("sneak_bans", {}):
+            ban_expiry = target["sneak_bans"][str(person)] - timedelta(days = 2)
+            if datetime.utcnow() < ban_expiry:
+                remaining = ban_expiry - datetime.utcnow()
+                return await message.channel.send(embed = Message(description=f"⛔ You are banned from travelling to this guild for {remaining.days} days and {remaining.seconds//3600} hours."))
         # Member and role setup
         member = message.guild.get_member(person)
         old_visiting = user["visitingGuild"]

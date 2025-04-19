@@ -28,8 +28,12 @@ class sneak:
         if coins < 80:
             return await message.channel.send(embed=Message(description="💸 **You don't have enough money to sneak!**"))
 
-        if person in target["sneak_bans"] and target["sneak_bans"][person] <= datetime.utcnow:
-            return await message.channel.send(embed = Message(description = f'You are banned from this guild for {target_guild["sneak_bans"][person]-datetime.utcnow} days'))
+        if str(person) in target.get("sneak_bans", {}):
+            ban_expiry = target["sneak_bans"][str(person)]
+
+            if datetime.utcnow() < ban_expiry:
+                remaining = ban_expiry - datetime.utcnow()
+                return await message.channel.send(embed = Message(description=f"⛔ You are banned from sneaking into this guild for {remaining.days} days and {remaining.seconds//3600} hours."))
         if user["visitingGuild"] == target_guild:
             return await message.channel.send(embed=Message(description=" **You're already in that guild.**"))
 
