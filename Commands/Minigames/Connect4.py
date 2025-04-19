@@ -6,7 +6,7 @@ class Connect4:
     def __init__(self):
         self.name = "connect4"
         self.category = "Minigames"
-        self.description = "Play connect 4 with your friend. Use !connect4 <user> to play with your friend. Win 20 coins! (coin implementation tbd)"
+        self.description = "Play connect 4 with your friend. Use !connect4 <user> to play with your friend."
         self.number_args = 1
         self.user_permissions = []
 
