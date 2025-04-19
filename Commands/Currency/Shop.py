@@ -85,8 +85,8 @@ def create_shop_embed(tier, shop_data, userShop):
             name=item["name"],
             value=f"💰 {item['price']} coins\n🆔 Item ID: {item['itemID']}",
             inline=False
-        )
-    return embed
+        )    
+        return embed
 
 # Custom view with buttons to navigate tiers
 class ShopView(View):
@@ -114,6 +114,7 @@ class Shop:
     def __init__(self):
         # The command name. In this case this command will run when you type !test
         self.name = "shop"
+
         # Category of the command. Preferably the name of the folder this file is in.
         self.category = "Currency"
 
@@ -131,21 +132,20 @@ class Shop:
     async def run(self, message, args, client):
         userID = message.author.id
         user = client.usersCollection.find_one({"_id": userID})
-        if not user:
-            return await message.channel.send(embed=Message(description="Please  use !join before using this command."))
-        if (user['visitingGuild'] == "Fire" and user['is_sneaking']) or (user['homeGuild'] == "Fire" and not user['is_sneaking']):
+        
+        if (user['visitingGuild'] == "Fire"):
             userShop = "Fire Shop"
             view = ShopView(shop_data_fire, userShop)
             embed = create_shop_embed("Rare", shop_data_fire, userShop)
-        elif (user['visitingGuild'] == "Water" and user['is_sneaking']) or (user['homeGuild'] == "Water" and not user['is_sneaking']):
+        elif (user['visitingGuild'] == "Water"):
             userShop = "Water Shop"
             view = ShopView(shop_data_water, userShop)
             embed = create_shop_embed("Rare", shop_data_water, userShop)
-        elif (user['visitingGuild'] == "Air" and user['is_sneaking']) or (user['homeGuild'] == "Air" and not user['is_sneaking']):
+        elif (user['visitingGuild'] == "Air"):
             userShop = "Air Shop"
             view = ShopView(shop_data_air, userShop)
             embed = create_shop_embed("Rare", shop_data_air, userShop)
-        elif (user['visitingGuild'] == "Earth" and user['is_sneaking']) or (user['homeGuild'] == "Earth" and not user['is_sneaking']):
+        elif (user['visitingGuild'] == "Earth" ):
             userShop = "Earth Shop"
             view = ShopView(shop_data_earth, userShop)
             embed = create_shop_embed("Rare", shop_data_earth, userShop)
