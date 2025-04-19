@@ -53,15 +53,15 @@ class battlesystem:
                 pet2 = pets2[opponent_choice[0]-1]
                 self.battlestate = {
                 "hp":{
-                    "user" : pet1["base_hp"],
-                    "opponent" : pet2["base_hp"]
+                    self.challenger["_id"] : pet1["base_hp"],
+                    self.opponent["_id"] : pet2["base_hp"]
                 },
                 "buffs" : {},
                 "status_effects" : {},
                 "used_abilities" : set(),
                 "ongoing_effects": {
-                    "user": [],
-                    "opponent": []
+                    self.challenger["_id"] : [],
+                    self.opponent["_id"] : []
                 }
                 }
                 await self.battling(pet1,pet2,self.message,self.client)
@@ -107,69 +107,91 @@ class battlesystem:
                 await self.message.channel.send("⏰ Battle cancelled — one or both players didn’t pick in time.")
 
     async def prompt_move_selection(self, user_id, pet, message):
-        view = View(timeout=60)
+        view = discord.ui.View(timeout=60)
         move_choice = {"value": None}
         event = asyncio.Event()
 
         for index, move in enumerate(pet["moves"], start=1):
-            btn = Button(label=f"{index}. {move['name']}", style=discord.ButtonStyle.primary)
+            btn = discord.ui.Button(label=f"{index}. {move['name']}", style=discord.ButtonStyle.primary)
 
-            async def callback(interaction, move_name=move['name']):
+            async def callback(interaction: discord.Interaction, move_data=move):
                 if interaction.user.id != user_id:
                     await interaction.response.send_message("❌ You can't choose this move.", ephemeral=True)
                     return
                 if move_choice["value"] is None:
-                    move_choice["value"] = move_name
-                    await interaction.response.send_message(f"✅ You selected **{move_name}**!", ephemeral=True)
+                    move_choice["value"] = move_data
+                    await interaction.response.send_message(f"✅ You selected **{move_data['name']}**!", ephemeral=True)
                     event.set()
 
             btn.callback = callback
             view.add_item(btn)
 
-        # Send the ephemeral message to the correct user
-        user = message.guild.get_member(user_id)
-        await user.send(f"⚔️ Choose a move for **{pet['name']}**:", view=view)
+        # Send the view to the appropriate user as ephemeral
+        await message.channel.send(
+            content=f"<@{user_id}>, choose a move for **{pet['name']}**:",
+            view=view
+        )
 
         try:
             await asyncio.wait_for(event.wait(), timeout=60)
         except asyncio.TimeoutError:
-            move_choice["value"] = "No Move (Timed Out)"
+            move_choice["value"] = {"name": "No Move (Timed Out)", "power": 0, "numInstances": 0}
 
         return move_choice["value"]
 
-    def apply_move_effects(self, move, attacker, defender):
-    # Apply attack buffs/debuffs
+    def apply_move_effects(self, move, attacker_id, defender_id):
         if "atkboost" in move:
-            self.battlestate["buffs"][attacker]["attack"] += move["atkbuff"]
+            self.battlestate["buffs"][attacker_id]["attack"] += move["atkboost"]
         if "atkreduction" in move:
-            self.battlestate["buffs"][defender]["attack"] -= move["atkreduction"]
-
+            self.battlestate["buffs"][defender_id]["attack"] -= move["atkreduction"]
         if "defbuff" in move:
-            self.battlestate["buffs"][attacker]["defense"] += move["defbuff"]
+            self.battlestate["buffs"][attacker_id]["defense"] += move["defbuff"]
         if "defreduction" in move:
-            self.battlestate["buffs"][defender]["defense"] -= move["defreduction"]
-        
-        if move["numInstances"] > 1 and move["power"] > 0:
-            self.battlestate["ongoing_effects"][defender].append({
-                "name": move["name"],
-                "power": move["power"],
-                "turns_left": move["numInstances"]
-            })
-    def draw_hp_bar(self, draw, x, y, width, height, current_hp, max_hp):
-        """Draws a green HP bar with a black border."""
-        bar_outline = (x, y, x + width, y + height)
-        fill_width = int((current_hp / max_hp) * width)
-        bar_fill = (x, y, x + fill_width, y + height)
+            self.battlestate["buffs"][defender_id]["defense"] -= move["defreduction"]
 
+        
+        # if move["numInstances"] > 1 and move["power"] > 0:
+        #     self.battlestate["ongoing_effects"][defender].append({
+        #         "name": move["name"],
+        #         "power": move["power"],
+        #         "turns_left": move["numInstances"]
+        #     })
+    def draw_hp_bar(self, draw, x, y, width, height, current_hp, max_hp):
+        """Draws an HP bar with a black border that shows empty when HP is negative."""
+        # Draw the border
+        bar_outline = (x, y, x + width, y + height)
         draw.rectangle(bar_outline, outline="black", width=2)
-        draw.rectangle(bar_fill, fill="green")
+        
+        # Ensure current_hp is not negative for display purposes
+        display_hp = max(0, current_hp)
+        
+        # Calculate fill width based on current HP percentage
+        if max_hp > 0:  # Prevent division by zero
+            fill_width = int((display_hp / max_hp) * width)
+            # Make sure fill doesn't go negative
+            fill_width = max(0, fill_width)
+            
+            # Only draw the filled portion if there's HP remaining
+            if fill_width > 0:
+                bar_fill = (x, y, x + fill_width, y + height)
+                
+                # Choose color based on HP percentage
+                hp_percent = display_hp / max_hp
+                if hp_percent > 0.6:
+                    color = "green"
+                elif hp_percent > 0.3:
+                    color = "yellow"
+                else:
+                    color = "red"
+                    
+                draw.rectangle(bar_fill, fill=color)
 
 
     def generate_battle_image(self, pet1,pet2):
         max_hp1 = pet1["base_hp"]
         max_hp2 = pet2["base_hp"]
-        hp1 = self.battlestate["hp"]["user"]
-        hp2 = self.battlestate["hp"]["opponent"]
+        hp1 = self.battlestate["hp"][self.challenger["_id"]]
+        hp2 = self.battlestate["hp"][self.opponent["_id"]]
         # Load and resize images
         image1 = Image.open(pet1["image"]).resize((200, 200))
         image2 = Image.open(pet2["image"]).resize((200, 200))
@@ -212,17 +234,19 @@ class battlesystem:
         self.battlestate["ongoing_effects"][defender] = remaining
         return total_damage
 
-    def calculate_damage(self, attacker, defender, move):
-        self.apply_move_effects(move)
-        atk = max(5,(attacker["attack"] + self.battlestate["buffs"][attacker]["attack"]) * move["power"]  / 100 - (defender["defense"] + self.battlestate["buffs"][defender]["defense"])+self.process_ongoing_effects(defender))
+    def calculate_damage(self, attacker, defender, move,chal, defen):
+        self.apply_move_effects(move,attacker,defender)
+        atk = max(5,(attacker["attack"] + self.battlestate["buffs"][chal]["attack"]) * move["power"]  / 100 - (defender["defense"] + self.battlestate["buffs"][defen]["defense"])+self.process_ongoing_effects(defen))
         return atk
     
     async def battling(self, pet1 ,pet2, message, client):
+        challenger_id = self.challenger["_id"]
+        opponent_id = self.opponent["_id"]
         user_hp = pet1["base_hp"]
         opponent_hp = pet2['base_hp']
         self.battlestate["buffs"] = {
-            "opponent": {"attack": 0, "defense": 0},
-            "user" : {"attack" : 0, "defense":0}
+            opponent_id: {"attack": 0, "defense": 0},
+            challenger_id : {"attack" : 0, "defense":0}
         }
         priority = pet1 if pet1["speed"] > pet2["speed"] else pet2
         turn = 1
@@ -231,46 +255,47 @@ class battlesystem:
         file = discord.File(self.output_path, filename="battle.png")
         image_embed = discord.Embed(title=f"⚔ Battle: {pet1['name']} vs {pet2['name']}")
         image_embed.set_image(url="attachment://battle.png")
-        battle_message = await message.channel.send(embeds = [image_embed, detail_embed], file=file)
+        await message.channel.send(embeds = [image_embed, detail_embed], file=file)
         move_challenger = None
         move_opponent = None
         while(user_hp > 0 and opponent_hp > 0):
             await asyncio.sleep(1)
-            move_challenger = self.prompt_move_selection(self.challenger["_id"], pet1, message)
-            move_opponent = self.prompt_move_selection(self.opponent["_id"], pet2,message)
-            dmg1 = self.calculate_damage("user", "opponent", move_challenger)
-            dmg2 = self.calculate_damage("opponent", "user", move_opponent)
+            move_challenger = await self.prompt_move_selection(self.challenger["_id"], pet1, message)
+            move_opponent = await self.prompt_move_selection(self.opponent["_id"], pet2,message)
+            dmg1 = self.calculate_damage(pet1, pet2, move_challenger, challenger_id, opponent_id)
+            dmg2 = self.calculate_damage(pet2, pet1, move_opponent, opponent_id, challenger_id)
+
             if(priority == pet1):
-                self.battlestate["hp"]["opponent"] -= dmg1
-                if(self.battlestate["hp"]["opponent"] <= 0):
+                self.battlestate["hp"][opponent_id] -= dmg1
+                if(self.battlestate["hp"][opponent_id] <= 0):
                     self.battle_end(self.challenger, self.opponent)
-                self.battlestate["hp"]["user"] -= dmg2
+                self.battlestate["hp"][challenger_id] -= dmg2
             else:
-                self.battlestate["hp"]["user"] -= dmg2
-                if(self.battlestate["hp"]["user"] <= 0):
-                    self.battle_end(self.opponent, self.challenger)
-                self.battlestate["hp"]["opponent"] -= dmg1
+                self.battlestate["hp"][challenger_id] -= dmg2
+                if(self.battlestate["hp"][challenger_id] <= 0):
+                    await self.battle_end(self.opponent, self.challenger, message)
+                self.battlestate["hp"][opponent_id] -= dmg1
+            if(self.battlestate["hp"][opponent_id] <= 0):
+                    await self.battle_end(self.challenger, self.opponent, message)
+            if(self.battlestate["hp"][challenger_id] <= 0):
+                    await self.battle_end(self.opponent, self.challenger, message)
             self.generate_battle_image(pet1,pet2)
             file = discord.File(self.output_path, filename="battle.png")
             image_embed = discord.Embed(title=f"⚔ Battle: {pet1['name']} vs {pet2['name']}")
             image_embed.set_image(url="attachment://battle.png")
             status_text = (
                 f"**Turn {turn}**\n\n"
-                f"🟢 **{pet1['name']} (You)**\n"
-                f"HP: {user_hp} | ATK Buff: {self.battlestate['buffs']['user']['attack']} | DEF Buff: {self.battlestate['buffs']['user']['defense']}\n"
-                f"Last Move: `{move_challenger}`\n\n"
-                f"🔵 **{pet2['name']} (Opponent)**\n"
-                f"HP: {opponent_hp} | ATK Buff: {self.battlestate['buffs']['opponent']['attack']} | DEF Buff: {self.battlestate['buffs']['opponent']['defense']}\n"
-                f"Last Move: `{move_opponent}`"
+                f"🟢 **{pet1['name']}**\n"
+                f"HP: {max(0, self.battlestate['hp'][challenger_id])}/{pet1['base_hp']} | ATK Buff: {self.battlestate['buffs'][challenger_id]['attack']} | DEF Buff: {self.battlestate['buffs'][challenger_id]['defense']}\n"
+                f"Last Move: `{move_challenger['name']}`\n\n"
+                f"🔵 **{pet2['name']}**\n"
+                f"HP: {max(0, self.battlestate['hp'][opponent_id])}/{pet2['base_hp']} | ATK Buff: {self.battlestate['buffs'][opponent_id]['attack']} | DEF Buff: {self.battlestate['buffs'][opponent_id]['defense']}\n"
+                f"Last Move: `{move_opponent['name']}`"
             )
             detail_embed = discord.Embed(title=f"Turn {turn}", description=status_text, color=discord.Color.green())
-            await battle_message.edit(attachments=[file],embeds=[image_embed, detail_embed])
-            if(self.battlestate["hp"]["opponent"] <= 0):
-                    self.battle_end(self.challenger, self.opponent)
-            if(self.battlestate["hp"]["user"] <= 0):
-                    self.battle_end(self.opponent, self.challenger)
+            await message.channel.send(file=file,embeds=[image_embed, detail_embed])
+            
             turn += 1
     
-    async def battle_end(self , winner , loser):
-        print(f"{winner["_id"].display_name} - winner, {loser["_id"].display_name} - loser")
-
+    async def battle_end(self , winner , loser, message):
+        await message.channel.send(f"{winner["_id"].display_name} - winner, {loser["_id"].display_name} - loser")

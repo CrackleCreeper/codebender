@@ -34,7 +34,7 @@ def create_pet_embed(pet, pet_type):
     # Add moves
     moves_text = ""
     for move in pet["moves"]:
-        moves_text += f"**{move['name']}** - Power: {move['power']}\n"
+        moves_text += f"**{move['name']}**\n"
     
     embed.add_field(name="Moves", value=moves_text, inline=False)
     
@@ -42,9 +42,6 @@ def create_pet_embed(pet, pet_type):
     # Instead of checking if the file exists (which may fail if paths are relative),
     # directly attach the image and handle any errors during the send process
     image_path = pet["image"]
-    p = image_path.split("/")
-    newp = p[:2] + ["PetImages"]  + p[2:]
-    image_path = "/".join(newp)
     # Convert path to standard format if needed
     
     return embed, image_path

@@ -4,27 +4,27 @@ from discord.ui import View, Button
 from Commands.Currency.Shop import shop_data_earth, shop_data_fire, shop_data_air, shop_data_water
 
 fire_moves = {
-    "Floor Is Lava": {"name": "Floor Is Lava", "type": "Fire", "power": 0},
-    "Fireball": {"name": "Fireball", "type": "Fire", "power": 25},
-    "Smokescreen": {"name": "Smokescreen", "type": "Fire", "power": 0}
+    "Floor Is Lava": {"name": "Floor Is Lava", "type": "Fire"},
+    "Fireball": {"name": "Fireball", "type": "Fire"},
+    "Smokescreen": {"name": "Smokescreen", "type": "Fire"}
 }
 
 water_moves = {
-    "Freeze": {"name": "Freeze", "type": "Water", "power": 0},
-    "Liquid Mirror": {"name": "Liquid Mirror", "type": "Water", "power": 0},
-    "Holy Water": {"name": "Holy Water", "type": "Water", "power": 0}
+    "Freeze": {"name": "Freeze", "type": "Water"},
+    "Liquid Mirror": {"name": "Liquid Mirror", "type": "Water"},
+    "Holy Water": {"name": "Holy Water", "type": "Water"}
 }
 
 air_moves = {
-    "Whirlwind": {"name": "Whirlwind", "type": "Air", "power": 25},
-    "Aircutter": {"name": "Aircutter", "type": "Air", "power": 15},
-    "Gale Strike": {"name": "Gale Strike", "type": "Air", "power": 0}
+    "Whirlwind Maelstorm": {"name": "Whirlwind Maelstorm", "type": "Air"},
+    "Aircutter": {"name": "Aircutter", "type": "Air"},
+    "Wind Shield": {"name": "Wind Shield", "type": "Air"}
 }
 
 earth_moves = {
-    "Photosynthesis": {"name": "Photosynthesis", "type": "Earth", "power": 0},
-    "Earthquake": {"name": "Earthquake", "type": "Earth", "power": 15},
-    "Earthen Wall": {"name": "Earthen Wall", "type": "Earth", "power": 0}
+    "Photosynthesis": {"name": "Photosynthesis", "type": "Earth"},
+    "Earthquake": {"name": "Earthquake", "type": "Earth"},
+    "Earthen Wall": {"name": "Earthen Wall", "type": "Earth"}
 }
 
 all_moves = {
