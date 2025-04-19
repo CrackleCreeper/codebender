@@ -16,9 +16,9 @@ water_moves = {
 }
 
 air_moves = {
-    "Whirlwind": {"name": "Whirlwind", "type": "Air"},
+    "Whirlwind Maelstorm": {"name": "Whirlwind Maelstorm", "type": "Air"},
     "Aircutter": {"name": "Aircutter", "type": "Air"},
-    "Gale Strike": {"name": "Gale Strike", "type": "Air"}
+    "Wind Shield": {"name": "Wind Shield", "type": "Air"}
 }
 
 earth_moves = {
