@@ -13,7 +13,7 @@ class Cleanup:
         self.category = "Initialisation"
 
         # What this command is used for. This description will be later used in the help command.
-        self.description = "command to remove all roles and channels the bot created"
+        self.description = "Command to remove all roles and channels the bot created, before kicking the bot."
 
         # The min number of arguments needed. In this case we need 1. So the command must be !test <argument>.
         self.number_args = 0

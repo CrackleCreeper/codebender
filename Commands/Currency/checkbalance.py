@@ -13,7 +13,7 @@ class checkbalance:
         self.category = "Currency"
 
         # What this command is used for. This description will be later used in the help command.
-        self.description = "command to check currency owned"
+        self.description = "Command to check coins owned"
 
         # The min number of arguments needed. In this case we need 1. So the command must be !test <argument>.
         self.number_args = 0

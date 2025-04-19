@@ -10,12 +10,12 @@ from wand.color import Color
 import asyncio
 
 chess_games = {}
-win_amount = 100
+win_amount = 20
 class Chess:
     def __init__(self):
         self.name = "chessguess"
         self.category = "Minigames"
-        self.description = "Guess the best move in a random chess position!"
+        self.description = "Guess the best move in a random chess position! Win 20 coins!"
         self.number_args = 0
         self.user_permissions = []
 

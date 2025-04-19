@@ -24,7 +24,7 @@ class Help:
         
         # Add each category as a field in the embed
         for category, cmds in cats.items():
-            lines = [f"**!{cmd.name}** - {cmd.description}" for cmd in cmds]
+            lines = [f"`!{cmd.name}` - {cmd.description}" for cmd in cmds]
             embed.add_field(
                 name=f"{category} [{len(cmds)}]",
                 value="\n".join(lines),

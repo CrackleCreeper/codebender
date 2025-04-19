@@ -9,7 +9,7 @@ class sneak:
         self.name = "sneak"
         self.category = "Map"
         self.number_args = 1
-        self.description = "sneak command"
+        self.description = "Command to sneak into another guild. Use !sneak <guild>. Costs 80 coins."
         self.user_permissions = []
 
     async def run(self, message, args, client):
