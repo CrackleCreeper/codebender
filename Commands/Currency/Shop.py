@@ -119,7 +119,7 @@ class Shop:
         self.category = "Currency"
 
         # What this command is used for. This description will be later used in the help command.
-        self.description = "shop to view and buy items"
+        self.description = "Guild wise shop to view and buy items- displays only the shop of the guild you are from/ or are sneaking to."
 
         # The min number of arguments needed. In this case we need 1. So the command must be !test <argument>.
         self.number_args = 0

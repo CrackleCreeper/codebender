@@ -12,7 +12,7 @@ class Fasttype:
     def __init__(self):
         self.name = "fasttype"
         self.category = "Minigames"
-        self.description = "A game where we can see how fast you type! You have 15 seconds to type the given sentence!"
+        self.description = "A game where we can see how fast you type! You have 15 seconds to type the given sentence! Win 25 coins!"
         self.number_args = 0
         self.user_permissions = []
 

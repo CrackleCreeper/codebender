@@ -9,7 +9,7 @@ class Slots:
     def __init__(self):
         self.name = "slots"
         self.category = "Minigames"
-        self.description = "Spin the slot machine and try your luck with rarities and diagonals!"
+        self.description = "Spin the slot machine and try your luck with rarities and diagonals! Type !slots <bet> to play. Get the amount of coins you bet if you win, or lose it all!"
         self.number_args = 1
         self.user_permissions = []
 

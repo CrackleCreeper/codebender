@@ -2,12 +2,12 @@ from Structures.Message import Message
 import discord
 import asyncio
 import aiohttp
-win_amount = 100
+win_amount = 25
 class Hangman:
     def __init__(self):
         self.name = "hangman"
         self.category = "Minigames"
-        self.description = "Play hangman."
+        self.description = "Play hangman. Win 25 coins!"
         self.number_args = 0
         self.user_permissions = []
 

@@ -9,7 +9,7 @@ class catch:
         self.name = "catch"
         self.category = "Map"
         self.number_args = 1
-        self.description = "catching command"
+        self.description = "Command to catch the user when they are sneaking into another guild. Use !catch <user>."
         self.user_permissions = []
 
     async def run(self, message, args, client):

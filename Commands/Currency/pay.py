@@ -7,7 +7,7 @@ class pay:
         self.name = "pay"
         self.category = "Currency"
         self.number_args = 2
-        self.description = "pay command"
+        self.description = "Command to pay another user money from your wallet. Use !pay <user> <amount>."
         self.user_permissions = []
 
     async def run(self, message,args,client):

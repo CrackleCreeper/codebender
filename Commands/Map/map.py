@@ -8,7 +8,7 @@ class map:
         self.name = "map"
         self.category = "Map"
         self.number_args = 0
-        self.description = "map command"
+        self.description = "Command to show the map, and the user's current location in it."
         self.user_permissions = []
 
     async def run(self, message, args, client):

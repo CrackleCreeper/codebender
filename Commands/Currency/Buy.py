@@ -37,7 +37,7 @@ all_moves = {
 class Buy:
     def __init__(self):
         self.name = "buy"
-        self.description = "Buy something from your guild shop."
+        self.description = "Buy something from your guild shop. Use !buy <itemID> as given in the shop to buy an item."
         self.number_args = 1
         self.category = "Currency"
         self.user_permissions = []

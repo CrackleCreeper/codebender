@@ -8,7 +8,7 @@ class travel:
         self.name = "travel"
         self.category = "Map"
         self.number_args = 1
-        self.description = "travel command"
+        self.description = "Command to travel to another guild. Use !travel <guild>. Costs 400 coins."
         self.user_permissions = []
 
     async def run(self, message, args, client):
