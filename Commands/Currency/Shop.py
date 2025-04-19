@@ -86,7 +86,7 @@ def create_shop_embed(tier, shop_data, userShop):
             value=f"💰 {item['price']} coins\n🆔 Item ID: {item['itemID']}",
             inline=False
         )    
-        return embed
+    return embed
 
 # Custom view with buttons to navigate tiers
 class ShopView(View):

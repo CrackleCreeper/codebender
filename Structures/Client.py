@@ -131,7 +131,7 @@ class HackniteClient(discord.Client):
                 instance = self.commands[name.lower()]
                 if self.has_permissions(message.author, instance.user_permissions):
                     expected_args = getattr(instance, 'number_args', 0)
-                    if len(args) == expected_args:
+                    if len(args) >= expected_args:
                         await instance.run(message, args, self)
                     else:
                         await message.channel.send('Please enter all the arguments.')
