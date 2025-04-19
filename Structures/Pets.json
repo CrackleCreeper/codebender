@@ -9,7 +9,8 @@
             "base_hp": 30,
             "attack": 14,
             "defense": 6,
-            "speed": 10,
+            "image": "./PICTURES/BasiliskCentipede.png",
+            "description": "A venomous creature combining features of a basilisk and a centipede. It has a long, segmented body with numerous legs and a pair of sharp mandibles. Its venom causes temporary paralysis.",
             "moves": [
                 {
                     "name": "Scorch Bite",
@@ -37,7 +38,8 @@
             "base_hp": 35,
             "attack": 16,
             "defense": 5,
-            "speed": 10,
+            "image": "./PICTURES/KomodoRhino.png",
+            "description": "A formidable hybrid of a Komodo dragon and a rhinoceros, the komodo rhino possesses a thick, steel-like hide and three prominent horns—two curving downward from its forehead and one upward from its snout. Its body combines reptilian and mammalian features, ending in a long, lizard-like tail. Despite its size, it is surprisingly agile and strong, capable of scaling walls and enduring extreme temperatures",
             "moves": [
                 {
                     "name": "Horn Bash",
@@ -65,7 +67,8 @@
             "base_hp": 28,
             "attack": 12,
             "defense": 7,
-            "speed": 10,
+            "image": "./PICTURES/Phoenix.png",
+            "description": "The Phoenix is a mythical firebird with control over flames, capable of generating pure fire that burns through anything. It is immortal, regenerating from injuries and reborn from its ashes. Its tears can heal wounds and cure poison. The Phoenix can fly at incredible speeds, create shockwaves with its wings, emit blinding light, and teleport in bursts of fire. With immense strength and regenerative abilities, it is a powerful and revered creature",
             "moves": [
                 {
                     "name": "Blazing Talon",
@@ -93,7 +96,8 @@
             "base_hp": 40,
             "attack": 18,
             "defense": 9,
-            "speed": 10,
+            "image": "./PICTURES/Dragon.png",
+            "description": "Majestic, serpentine creatures revered as the original firebenders. They can breathe fire and, in some cases, possess wings. Their immense size and firebending abilities make them formidable in combat, capable of devastating attacks and inspiring awe",
             "moves": [
                 {
                     "name": "Inferno Blast",
@@ -123,7 +127,8 @@
             "base_hp": 32,
             "attack": 10,
             "defense": 12,
-            "speed": 10,
+            "image": "./PICTURES/KoalaOtter.png",
+            "description": "The koalaotter is a furry, aquatic mammal native to the North Pole and surrounding Northern Sea. It has rounded, furry ears, a black nose, and small, black eyes. Capable of standing on its hind legs on land, it has a light gray back and head with a white underbelly and tail stripes",
             "moves": [
                 {
                     "name": "Splash Swipe",
@@ -151,7 +156,8 @@
             "base_hp": 30,
             "attack": 14,
             "defense": 9,
-            "speed": 10,
+            "image": "./PICTURES/DolphinPiranha.png",
+            "description": "The Dolphin Piranha is a hybrid predator, combining the agility and intelligence of a dolphin with the ferocity of a piranha. It can swim at high speeds, using its streamlined body to dart through water. Equipped with sharp teeth, it is capable of inflicting devastating damage on opponents. Its speed and quick reflexes make it a formidable foe in aquatic battles, while its pack mentality allows it to overwhelm enemies with coordinated attacks",
             "moves": [
                 {
                     "name": "Rip Tide",
@@ -179,7 +185,8 @@
             "base_hp": 35,
             "attack": 16,
             "defense": 7,
-            "speed": 10,
+            "image": "./PICTURES/TigerShark.png",
+            "description": "The Tiger Shark is a massive, sleek predator known for its strength and ferocity. It’s a highly aggressive creature, capable of quick, powerful bites that can incapacitate enemies. With sharp teeth and a relentless hunting instinct, it is a formidable opponent in both water and land-based combat.",
             "moves": [
                 {
                     "name": "Blood Lunge",
@@ -207,7 +214,8 @@
             "base_hp": 40,
             "attack": 17,
             "defense": 11,
-            "speed": 10,
+            "image": "./PICTURES/Kraken.png",
+            "description": "The Kraken is a colossal sea creature with immense tentacles that can wrap around and crush enemies. It can create whirlpools with the force of its strikes and drag opponents into the depths. Its massive size and strength make it a terrifying force in aquatic combat.",
             "moves": [
                 {
                     "name": "Tentacle Slam",
@@ -237,7 +245,8 @@
             "base_hp": 27,
             "attack": 10,
             "defense": 6,
-            "speed": 10,
+            "image": "./PICTURES/KittenMoth.png",
+            "description": "The Kitten Moth is a delicate, but swift creature resembling a moth with kitten-like agility. It can fly at high speeds and is capable of producing a paralyzing dust from its wings. In battle, it uses its speed and the ability to confuse enemies by creating blinding dust clouds.",
             "moves": [
                 {
                     "name": "Kitty Claws",
@@ -265,7 +274,8 @@
             "base_hp": 28,
             "attack": 10,
             "defense": 8,
-            "speed": 10,
+            "image": "./PICTURES/RingTailedWingedLemur.png",
+            "description": "The Ring-Tailed Winged Lemur has the agility of a lemur and the ability to glide with its winged body. It’s nimble, quick, and highly evasive, capable of darting in and out of battle while using its sharp claws to disarm or incapacitate foes. Its aerial advantage makes it hard to target.",
             "moves": [
                 {
                     "name": "Whirlwind Tail",
@@ -293,7 +303,8 @@
             "base_hp": 27,
             "attack": 12,
             "defense": 6,
-            "speed": 10,
+            "image": "./PICTURES/SpiderBat.png",
+            "description": "The Spider Bat is a hybrid creature with the agility of a bat and the venomous bite of a spider. It can fly and use echolocation to locate enemies in the dark. Its venomous bite paralyzes prey, making it an effective ambush predator in dark environments.",
             "moves": [
                 {
                     "name": "Echo Screech",
@@ -321,7 +332,8 @@
             "base_hp": 38,
             "attack": 14,
             "defense": 10,
-            "speed": 10,
+            "image": "./PICTURES/FlyingBison.png",
+            "description": "The Flying Bison is a large, powerful creature capable of flying long distances. It has incredible strength and endurance, making it ideal for aerial battles. The Flying Bison can use its powerful horns and hooves to attack, and its large wings can generate gusts of wind strong enough to blow enemies away.",
             "moves": [
                 {
                     "name": "Air Slam",
@@ -351,7 +363,8 @@
             "base_hp": 32,
             "attack": 13,
             "defense": 11,
-            "speed": 10,
+            "image": "./PICTURES/Crococat.png",
+            "description": "The Crococat is a fierce predator with the body of a cat and the strength of a crocodile. It is fast and agile, with sharp claws and teeth. It can swim swiftly and has a powerful bite that can crush bones, making it deadly both in water and on land.",
             "moves": [
                 {
                     "name": "Stone Swipe",
@@ -379,7 +392,8 @@
             "base_hp": 34,
             "attack": 15,
             "defense": 9,
-            "speed": 10,
+            "image": "./PICTURES/SandShark.png",
+            "description": "The Eel Sand Shark is a creature that combines the speed of an eel and the deadly bite of a sand shark. It can navigate through both water and sand with ease, using its sharp teeth to ambush enemies. Its electric shock can paralyze opponents, giving it an advantage in battle.",
             "moves": [
                 {
                     "name": "Quicksand Snap",
@@ -407,7 +421,8 @@
             "base_hp": 30,
             "attack": 12,
             "defense": 10,
-            "speed": 10,
+            "image": "./PICTURES/SpiderSnake.png",
+            "description": "The Spider Snake is a venomous creature with the body of a snake and the agility of a spider. It can climb walls and strike with venomous fangs, delivering a toxic bite that can incapacitate foes. Its flexibility and stealth make it a deadly predator in any environment.",
             "moves": [
                 {
                     "name": "Venom Crush",
@@ -435,7 +450,8 @@
             "base_hp": 36,
             "attack": 13,
             "defense": 12,
-            "speed": 10,
+            "image": "./PICTURES/Shirshu.png",
+            "description": "The Shirshu is a massive, bear-like creature with a keen sense of smell and a powerful, predatory nature. It has large, muscular legs and is capable of running at high speeds. Its heightened sense of smell allows it to track enemies and strike with precision. It is strong enough to overpower opponents in close combat.",
             "moves": [
                 {
                     "name": "Rock Slam",

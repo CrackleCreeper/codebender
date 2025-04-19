@@ -2,9 +2,12 @@ import discord
 import os
 import importlib.util
 import pymongo
-
+import json
 path = os.path.join(os.path.dirname(__file__), "../Commands")
 prefix = "!"
+
+with open("./Structures/Pets.json", "r") as f:
+    pets_data = json.load(f)
 
 class HackniteClient(discord.Client):
     def __init__(self):
@@ -12,6 +15,7 @@ class HackniteClient(discord.Client):
         intents.message_content = True
         intents.members = True
         super().__init__(intents=intents)
+        self.pets_data = pets_data
         self.commands = dict()
         self.users_dict = dict()
         self.guilds_dict = dict()
