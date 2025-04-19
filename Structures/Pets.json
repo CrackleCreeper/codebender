@@ -14,18 +14,15 @@
             "moves": [
                 {
                     "name": "Scorch Bite",
-                    "type": "Fire",
-                    "power": 12
+                    "type": "Fire"
                 },
                 {
                     "name": "Lava Skitter",
-                    "type": "Fire",
-                    "power": 10
+                    "type": "Fire"
                 },
                 {
                     "name": "Venom Tail",
-                    "type": "Fire",
-                    "power": 11
+                    "type": "Fire"
                 }
             ]
         },
@@ -43,18 +40,15 @@
             "moves": [
                 {
                     "name": "Horn Bash",
-                    "type": "Fire",
-                    "power": 14
+                    "type": "Fire"
                 },
                 {
                     "name": "Ember Charge",
-                    "type": "Fire",
-                    "power": 12
+                    "type": "Fire"
                 },
                 {
                     "name": "Crater Stomp",
-                    "type": "Fire",
-                    "power": 13
+                    "type": "Fire"
                 }
             ]
         },
@@ -72,18 +66,15 @@
             "moves": [
                 {
                     "name": "Blazing Talon",
-                    "type": "Fire",
-                    "power": 14
+                    "type": "Fire"
                 },
                 {
                     "name": "Sky Flame",
-                    "type": "Fire",
-                    "power": 13
+                    "type": "Fire"
                 },
                 {
                     "name": "Ash Dive",
-                    "type": "Fire",
-                    "power": 15
+                    "type": "Fire"
                 }
             ]
         },
@@ -101,18 +92,15 @@
             "moves": [
                 {
                     "name": "Inferno Blast",
-                    "type": "Fire",
-                    "power": 18
+                    "type": "Fire"
                 },
                 {
-                    "name": "Molten Claw",
-                    "type": "Fire",
-                    "power": 16
+                    "name": "Wings Of Fire",
+                    "type": "Fire"
                 },
                 {
                     "name": "Dragon Roar",
-                    "type": "Fire",
-                    "power": 17
+                    "type": "Fire"
                 }
             ]
         }
@@ -132,18 +120,15 @@
             "moves": [
                 {
                     "name": "Splash Swipe",
-                    "type": "Water",
-                    "power": 10
+                    "type": "Water"
                 },
                 {
                     "name": "Bubble Slam",
-                    "type": "Water",
-                    "power": 9
+                    "type": "Water"
                 },
                 {
                     "name": "Ripple Hit",
-                    "type": "Water",
-                    "power": 11
+                    "type": "Water"
                 }
             ]
         },
@@ -161,18 +146,15 @@
             "moves": [
                 {
                     "name": "Rip Tide",
-                    "type": "Water",
-                    "power": 14
+                    "type": "Water"
                 },
                 {
                     "name": "Aqua Lunge",
-                    "type": "Water",
-                    "power": 13
+                    "type": "Water"
                 },
                 {
                     "name": "Frenzy Bite",
-                    "type": "Water",
-                    "power": 15
+                    "type": "Water"
                 }
             ]
         },
@@ -186,22 +168,19 @@
             "attack": 16,
             "defense": 7,
             "image": "./PICTURES/TigerShark.png",
-            "description": "The Tiger Shark is a massive, sleek predator known for its strength and ferocity. It’s a highly aggressive creature, capable of quick, powerful bites that can incapacitate enemies. With sharp teeth and a relentless hunting instinct, it is a formidable opponent in both water and land-based combat.",
+            "description": "The Tiger Shark is a massive, sleek predator known for its strength and ferocity. It's a highly aggressive creature, capable of quick, powerful bites that can incapacitate enemies. With sharp teeth and a relentless hunting instinct, it is a formidable opponent in both water and land-based combat.",
             "moves": [
                 {
                     "name": "Blood Lunge",
-                    "type": "Water",
-                    "power": 16
+                    "type": "Water"
                 },
                 {
                     "name": "Wave Slash",
-                    "type": "Water",
-                    "power": 14
+                    "type": "Water"
                 },
                 {
                     "name": "Abyssal Strike",
-                    "type": "Water",
-                    "power": 15
+                    "type": "Water"
                 }
             ]
         },
@@ -219,18 +198,15 @@
             "moves": [
                 {
                     "name": "Tentacle Slam",
-                    "type": "Water",
-                    "power": 17
+                    "type": "Water"
                 },
                 {
                     "name": "Depth Surge",
-                    "type": "Water",
-                    "power": 18
+                    "type": "Water"
                 },
                 {
                     "name": "Maelstrom Whip",
-                    "type": "Water",
-                    "power": 19
+                    "type": "Water"
                 }
             ]
         }
@@ -250,18 +226,15 @@
             "moves": [
                 {
                     "name": "Kitty Claws",
-                    "type": "Air",
-                    "power": 9
+                    "type": "Air"
                 },
                 {
                     "name": "Moth Flame",
-                    "type": "Air",
-                    "power": 10
+                    "type": "Air"
                 },
                 {
                     "name": "Spin",
-                    "type": "Air",
-                    "power": 11
+                    "type": "Air"
                 }
             ]
         },
@@ -275,22 +248,19 @@
             "attack": 10,
             "defense": 8,
             "image": "./PICTURES/RingTailedWingedLemur.png",
-            "description": "The Ring-Tailed Winged Lemur has the agility of a lemur and the ability to glide with its winged body. It’s nimble, quick, and highly evasive, capable of darting in and out of battle while using its sharp claws to disarm or incapacitate foes. Its aerial advantage makes it hard to target.",
+            "description": "The Ring-Tailed Winged Lemur has the agility of a lemur and the ability to glide with its winged body. It's nimble, quick, and highly evasive, capable of darting in and out of battle while using its sharp claws to disarm or incapacitate foes. Its aerial advantage makes it hard to target.",
             "moves": [
                 {
                     "name": "Whirlwind Tail",
-                    "type": "Air",
-                    "power": 9
+                    "type": "Air"
                 },
                 {
                     "name": "Glide Kick",
-                    "type": "Air",
-                    "power": 10
+                    "type": "Air"
                 },
                 {
                     "name": "Breeze Strike",
-                    "type": "Air",
-                    "power": 11
+                    "type": "Air"
                 }
             ]
         },
@@ -308,18 +278,15 @@
             "moves": [
                 {
                     "name": "Echo Screech",
-                    "type": "Air",
-                    "power": 12
+                    "type": "Air"
                 },
                 {
                     "name": "Web Dive",
-                    "type": "Air",
-                    "power": 13
+                    "type": "Air"
                 },
                 {
                     "name": "Aerial Bite",
-                    "type": "Air",
-                    "power": 14
+                    "type": "Air"
                 }
             ]
         },
@@ -337,18 +304,15 @@
             "moves": [
                 {
                     "name": "Air Slam",
-                    "type": "Air",
-                    "power": 17
+                    "type": "Air"
                 },
                 {
                     "name": "Cloud Charge",
-                    "type": "Air",
-                    "power": 18
+                    "type": "Air"
                 },
                 {
                     "name": "Wind Crush",
-                    "type": "Air",
-                    "power": 16
+                    "type": "Air"
                 }
             ]
         }
@@ -368,18 +332,15 @@
             "moves": [
                 {
                     "name": "Stone Swipe",
-                    "type": "Earth",
-                    "power": 10
+                    "type": "Earth"
                 },
                 {
                     "name": "Mud Bash",
-                    "type": "Earth",
-                    "power": 11
+                    "type": "Earth"
                 },
                 {
                     "name": "Rock Lunge",
-                    "type": "Earth",
-                    "power": 12
+                    "type": "Earth"
                 }
             ]
         },
@@ -397,18 +358,15 @@
             "moves": [
                 {
                     "name": "Quicksand Snap",
-                    "type": "Earth",
-                    "power": 13
+                    "type": "Earth"
                 },
                 {
                     "name": "Burrow Strike",
-                    "type": "Earth",
-                    "power": 14
+                    "type": "Earth"
                 },
                 {
                     "name": "Dust Claw",
-                    "type": "Earth",
-                    "power": 15
+                    "type": "Earth"
                 }
             ]
         },
@@ -426,18 +384,15 @@
             "moves": [
                 {
                     "name": "Venom Crush",
-                    "type": "Earth",
-                    "power": 12
+                    "type": "Earth"
                 },
                 {
                     "name": "Ground Coil",
-                    "type": "Earth",
-                    "power": 13
+                    "type": "Earth"
                 },
                 {
                     "name": "Cave Bite",
-                    "type": "Earth",
-                    "power": 14
+                    "type": "Earth"
                 }
             ]
         },
@@ -455,18 +410,15 @@
             "moves": [
                 {
                     "name": "Rock Slam",
-                    "type": "Earth",
-                    "power": 16
+                    "type": "Earth"
                 },
                 {
-                    "name": "Boulder Barrage",
-                    "type": "Earth",
-                    "power": 17
+                    "name": "Paralyzing Tongue",
+                    "type": "Earth"
                 },
                 {
-                    "name": "Iron Fin",
-                    "type": "Earth",
-                    "power": 18
+                    "name": "Paralytic Pulse",
+                    "type": "Earth"
                 }
             ]
         }
