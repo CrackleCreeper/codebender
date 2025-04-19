@@ -118,120 +118,194 @@ class Buy:
 # from discord.ui import View, Button
 # from Commands.Currency.Shop import shop_data_earth, shop_data_fire, shop_data_air, shop_data_water
 
-# # Assuming pets_data is imported or defined as per your pets.json
+# # Pets data (import this properly from your JSON file in actual implementation)
 # pets_data = {
 #     "fire": [
-#         # ... (Fire pets data as provided)
+#         # ... (paste all fire pets data here)
 #     ],
 #     "water": [
-#         # ... (Water pets data as provided)
+#         # ... (paste all water pets data here)
 #     ],
 #     "air": [
-#         # ... (Air pets data as provided)
+#         # ... (paste all air pets data here)
 #     ],
 #     "earth": [
-#         # ... (Earth pets data as provided)
+#         # ... (paste all earth pets data here)
 #     ]
 # }
 
-# # ... (existing moves data and all_moves)
+# # Existing moves data
+# fire_moves = { 
+#     # ... (keep existing fire moves)
+# }
+# water_moves = {
+#     # ... (keep existing water moves)
+# }
+# air_moves = {
+#     # ... (keep existing air moves)
+# }
+# earth_moves = {
+#     # ... (keep existing earth moves)
+# }
+
+# all_moves = {**fire_moves, **water_moves, **air_moves, **earth_moves}
 
 # class Buy:
 #     def __init__(self):
 #         self.name = "buy"
 #         self.description = "Buy something from your guild shop."
-#         self.number_args = 2  # Adjust based on pet/skill handling
+#         self.number_args = 1  # Will handle dynamically in code
 #         self.category = "Currency"
 #         self.user_permissions = []
 
 #     async def run(self, message, args, client):
-#         itemIDS = [
-#             "FD1", "FS1", "FP1", "WD1", "WS1", "WP1", "AD1", "AS1", "AP1", "ED1", "ES1", "EP1",
-#             "FD2", "FS2", "FP2", "WD2", "WS2", "WP2", "AD2", "AS2", "AP2", "ED2", "ES2", "EP2",
-#             "FD3", "FS3", "FP3", "WD3", "WS3", "WP3", "AD3", "AS3", "AP3", "ED3", "ES3", "EP3"
-#         ]
-#         userData = client.usersCollection.find_one({"_id": message.author.id})
-#         if userData is None:
-#             return await message.channel.send(embed=Message(description="Use !join to join a guild before doing anything else."))
+#         user_id = message.author.id
+#         user_data = client.usersCollection.find_one({"_id": user_id})
         
-#         if len(args) < 1:
+#         if not user_data:
+#             return await message.channel.send(embed=Message(description="Use !join to join a guild first."))
+        
+#         if not args:
 #             return await message.channel.send(embed=Message(description="Please provide an item ID."))
         
-#         item_id = args[0]
-#         if item_id not in itemIDS:
-#             return await message.channel.send(embed=Message(description="Enter a valid ID"))
-        
-#         # Determine if it's a pet (P) or skill (S/D)
-#         is_pet = len(item_id) >= 2 and item_id[1].upper() == 'P'
-        
+#         item_id = args[0].upper()
+#         is_pet = item_id[1] == 'P' if len(item_id) >= 2 else False
+
+#         # Handle Pet Purchase
 #         if is_pet:
-#             # Handle pet purchase
-#             if len(args) != 1:
-#                 return await message.channel.send(embed=Message(description="Pet purchase requires only the item ID."))
-            
-#             # Parse element and tier from item_id
-#             element_code = item_id[0].upper()
-#             tier_number = item_id[2]
-#             element_map = {'F': 'fire', 'W': 'water', 'A': 'air', 'E': 'earth'}
-#             tier_map = {'1': 'Rare', '2': 'Epic', '3': 'Legendary'}
-            
-#             if element_code not in element_map or tier_number not in tier_map:
-#                 return await message.channel.send(embed=Message(description="Invalid item ID."))
-            
-#             element = element_map[element_code]
-#             tier = tier_map[tier_number]
-            
-#             # Get the correct shop data
-#             shop_data = None
-#             if element == 'fire':
-#                 shop_data = shop_data_fire
-#             elif element == 'water':
-#                 shop_data = shop_data_water
-#             elif element == 'air':
-#                 shop_data = shop_data_air
-#             elif element == 'earth':
-#                 shop_data = shop_data_earth
-            
-#             # Find the item in shop_data
-#             shop_items = shop_data.get(tier, [])
-#             item = next((i for i in shop_items if i['itemID'] == item_id), None)
-#             if not item:
-#                 return await message.channel.send(embed=Message(description="Item not found in shop."))
-            
-#             cost = item['price']
-#             pet_name = item['name']
-            
-#             # Find the pet in pets_data
-#             pets_list = pets_data.get(element, [])
-#             pet = next((p for p in pets_list if p['name'] == pet_name), None)
-#             if not pet:
-#                 return await message.channel.send(embed=Message(description="Pet data not found."))
-            
-#             # Check user's money
-#             if userData['money'] < cost:
-#                 return await message.channel.send(embed=Message(description="You don't have enough money."))
-            
-#             # Add pet to user's pets and deduct cost
-#             client.usersCollection.update_one(
-#                 {"_id": message.author.id},
-#                 {
-#                     "$push": {"pets": pet},
-#                     "$inc": {"money": -cost}
-#                 }
-#             )
-#             return await message.channel.send(embed=Message(description=f"Successfully purchased {pet['name']}!"))
+#             return await self.handle_pet_purchase(message, item_id, user_data, client)
         
-#         else:
-#             # Existing code for handling skills (FS, WS, etc.)
-#             # ... (existing skill purchase code)
-            
-#             # Note: Ensure to fix indices in skill handling as they may be incorrect
-#             # Example correction for FS2:
-#             # elif args[0] == "FS2":
-#             #     for item in shop_data_fire["Epic"]:
-#             #         if item["itemID"] == "FS2":
-#             #             cost = item["price"]
-#             #             move = all_moves[item["name"]]
-#             #             break
-            
-#             # ... (rest of the skill handling code)
+#         # Handle Skill/Decoration Purchase
+#         return await self.handle_skill_purchase(message, args, item_id, user_data, client)
+
+#     async def handle_pet_purchase(self, message, item_id, user_data, client):
+#         # Validate item structure
+#         if len(item_id) != 3 or item_id[1] != 'P':
+#             return await message.channel.send(embed=Message(description="Invalid pet item ID."))
+
+#         # Parse item ID components
+#         element_code = item_id[0]
+#         tier_number = item_id[2]
+        
+#         element_map = {'F': 'fire', 'W': 'water', 'A': 'air', 'E': 'earth'}
+#         tier_map = {'1': 'Rare', '2': 'Epic', '3': 'Legendary'}
+        
+#         element = element_map.get(element_code)
+#         tier = tier_map.get(tier_number)
+        
+#         if not element or not tier:
+#             return await message.channel.send(embed=Message(description="Invalid item ID format."))
+
+#         # Get shop data
+#         shop_data = {
+#             'fire': shop_data_fire,
+#             'water': shop_data_water,
+#             'air': shop_data_air,
+#             'earth': shop_data_earth
+#         }.get(element)
+
+#         if not shop_data:
+#             return await message.channel.send(embed=Message(description="Invalid guild shop."))
+
+#         # Find shop item
+#         shop_item = next(
+#             (item for tier_items in shop_data[tier] 
+#              for item in tier_items if item['itemID'] == item_id),
+#             None
+#         )
+        
+#         if not shop_item:
+#             return await message.channel.send(embed=Message(description="Item not found in shop."))
+
+#         # Find pet data
+#         pet_name = shop_item['name']
+#         pet_data = next(
+#             (pet for pet in pets_data[element] 
+#              if pet['name'] == pet_name),
+#             None
+#         )
+        
+#         if not pet_data:
+#             return await message.channel.send(embed=Message(description="Pet data not found."))
+
+#         # Check funds
+#         if user_data['money'] < shop_item['price']:
+#             return await message.channel.send(embed=Message(description="Insufficient funds."))
+
+#         # Check if pet already owned
+#         if any(p['name'] == pet_name for p in user_data.get('pets', [])):
+#             return await message.channel.send(embed=Message(description="You already own this pet."))
+
+#         # Update database
+#         client.usersCollection.update_one(
+#             {"_id": user_id},
+#             {
+#                 "$push": {"pets": pet_data},
+#                 "$inc": {"money": -shop_item['price']}
+#             }
+#         )
+#         return await message.channel.send(embed=Message(description=f"Purchased {pet_name}!"))
+
+#     async def handle_skill_purchase(self, message, args, item_id, user_data, client):
+#         if len(args) < 2:
+#             return await message.channel.send(embed=Message(description="Please provide a pet name."))
+        
+#         # Determine element from item ID
+#         element_map = {'F': 'fire', 'W': 'water', 'A': 'air', 'E': 'earth'}
+#         element = element_map.get(item_id[0])
+#         if not element:
+#             return await message.channel.send(embed=Message(description="Invalid item ID."))
+
+#         # Get correct shop data
+#         shop_data = {
+#             'fire': shop_data_fire,
+#             'water': shop_data_water,
+#             'air': shop_data_air,
+#             'earth': shop_data_earth
+#         }[element]
+
+#         # Find item in shop data
+#         shop_item = None
+#         for tier in ["Rare", "Epic", "Legendary"]:
+#             for item in shop_data.get(tier, []):
+#                 if item['itemID'] == item_id:
+#                     shop_item = item
+#                     break
+#             if shop_item:
+#                 break
+        
+#         if not shop_item:
+#             return await message.channel.send(embed=Message(description="Item not found in shop."))
+
+#         # Check funds
+#         if user_data['money'] < shop_item['price']:
+#             return await message.channel.send(embed=Message(description="Insufficient funds."))
+
+#         # Get move data
+#         move_name = shop_item['name']
+#         move_data = all_moves.get(move_name)
+#         if not move_data:
+#             return await message.channel.send(embed=Message(description="Skill data not found."))
+
+#         # Find target pet
+#         pet_name = args[1]
+#         target_pet = next(
+#             (pet for pet in user_data.get('pets', []) 
+#              if pet['name'].lower() == pet_name.lower()),
+#             None
+#         )
+        
+#         if not target_pet:
+#             return await message.channel.send(embed=Message(description="Pet not found."))
+
+#         # Update database
+#         client.usersCollection.update_one(
+#             {"_id": user_id, "pets.name": target_pet['name']},
+#             {
+#                 "$push": {"pets.$.moves": move_data},
+#                 "$inc": {"money": -shop_item['price']}
+#             }
+#         )
+#         return await message.channel.send(
+#             embed=Message(description=f"Added {move_name} to {target_pet['name']}!")
+#         )
