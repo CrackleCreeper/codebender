@@ -119,7 +119,20 @@ class battlesystem:
                 self.challenger["_id"]: [],
                 self.opponent["_id"]: []
             },
-            "throttle": {
+            "throttle": { "burst" : {
+                self.challenger["_id"] : 0,
+                self.opponent["_id"] : 0
+            },
+            "stun" : {
+                self.challenger["_id"] : 0,
+                self.opponent["_id"] : 0
+            },
+            "dodge":{
+                self.challenger["_id"] : 0,
+                self.opponent["_id"] : 0
+            }
+            },
+            "stunned":{
                 self.challenger["_id"] : 0,
                 self.opponent["_id"] : 0
             }
@@ -169,12 +182,23 @@ class battlesystem:
         move_choice = {"value": None}
         event = asyncio.Event()
 
-        throttle = self.battlestate.get("throttle", {}).get(user_id, 0)
+        # Assuming throttling is tracked for each skill type (adjust this based on your logic)
+        throttle_burst = self.battlestate["throttle"]["burst"].get(user_id, 0)
+        throttle_heal = self.battlestate["throttle"]["stun"].get(user_id, 0)
+        throttle_dodge = self.battlestate["throttle"]["dodge"].get(user_id, 0)
+
+        available_moves = []
 
         for index, move in enumerate(pet["moves"], start=1):
-            # If under throttle and move is a burst, skip it
-            if throttle > 0 and move.get("atktype") == "Burst":
+            # Skip moves if they are throttled
+            if move.get("atktype") == "Burst" and throttle_burst > 0:
                 continue
+            if move.get("skilltype") == "Heal" and throttle_heal > 0:
+                continue
+            if move.get("skilltype") == "Dodge" and throttle_dodge > 0:
+                continue
+
+            available_moves.append(move)
 
             btn = discord.ui.Button(label=f"{index}. {move['name']}", style=discord.ButtonStyle.primary)
 
@@ -190,6 +214,11 @@ class battlesystem:
             btn.callback = callback
             view.add_item(btn)
 
+        # If no available moves, skip turn
+        if not available_moves:
+            await message.channel.send(f"⚠ <@{user_id}> has no available moves this turn and must skip!")
+            return {"name": "No Available Move", "power": 0, "numInstances": 0, "atktype": "Basic", "skilltype": "Basic"}
+
         await message.channel.send(
             content=f"<@{user_id}>, choose a move for **{pet['name']}**:",
             view=view
@@ -199,7 +228,6 @@ class battlesystem:
             await asyncio.wait_for(event.wait(), timeout=60)
         except asyncio.TimeoutError:
             await self.message.channel.send(f"⏰ <@{user_id}> didn’t pick a move in time!")
-            # Auto-forfeit
             if user_id == self.challenger["_id"]:
                 return await self.battle_end(self.opponent_pet, self.challenger_pet, self.opponent, self.challenger)
             else:
@@ -388,32 +416,55 @@ class battlesystem:
         move_challenger = None
         move_opponent = None
         while(user_hp > 0 and opponent_hp > 0):
-            if(self.battlestate["throttle"][challenger_id]>0):
-                self.battlestate["throttle"][challenger_id] -= 1
-            if(self.battlestate["throttle"][opponent_id]>0):
-                self.battlestate["throttle"][opponent_id] -= 1
+            if  self.battlestate["stunned"][challenger_id] > 0:
+                self.battlestate["stunned"][challenger_id] -= 1
+            if  self.battlestate["stunned"][opponent_id] > 0:
+                self.battlestate["stunned"][opponent_id] -= 1
+            move_challenger = {"name": "No Available Move", "power": 0, "numInstances": 0, "atktype": "Basic", "skilltype": "Basic"}
+            move_opponent = {"name": "No Available Move", "power": 0, "numInstances": 0, "atktype": "Basic", "skilltype": "Basic"}
+            throttle_types = ["burst", "stun", "dodge"]
+            for throttle_type in throttle_types:
+                if self.battlestate["throttle"][throttle_type].get(challenger_id, 0) > 0:
+                    self.battlestate["throttle"][throttle_type][challenger_id] -= 1
+                if self.battlestate["throttle"][throttle_type].get(opponent_id, 0) > 0:
+                    self.battlestate["throttle"][throttle_type][opponent_id] -= 1
             await asyncio.sleep(1)
-            move_challenger = await self.prompt_move_selection(self.challenger["_id"], pet1, message)
-            move_opponent = await self.prompt_move_selection(self.opponent["_id"], pet2,message)
+            if self.battlestate["stunned"][challenger_id] == 0:
+                move_challenger = await self.prompt_move_selection(self.challenger["_id"], pet1, message)
+            if  self.battlestate["stunned"][opponent_id] == 0:
+                move_opponent = await self.prompt_move_selection(self.opponent["_id"], pet2,message)
             self.battlestate["ongoing_effects"][challenger_id].append(move_opponent)
             self.battlestate["ongoing_effects"][opponent_id].append(move_challenger)
-            if(move_challenger["atktype"] == "Burst"):
-                self.battlestate["throttle"][challenger_id] = 3
-            if move_opponent["atktype"] == "Burst":
-                self.battlestate["throttle"][opponent_id] = 3
+            for throttle_type in throttle_types:
+                if(move_challenger["atktype"].capitalize() == throttle_type):
+                    self.battlestate["throttle"][throttle_type][challenger_id] = 3
+                if move_opponent["atktype"].capitalize() == throttle_type:
+                    self.battlestate["throttle"][throttle_type][opponent_id] = 3
+            if move_challenger["skilltype"] == "Heal":
+                self.battlestate["hp"][challenger_id] = min(self.challenger_pet["base_hp"], move_challenger["heal"] + self.battlestate["hp"][challenger_id])
+            if move_opponent["skilltype"] == "Heal":
+                self.battlestate["hp"][opponent_id] = min(self.opponent_pet["base_hp"], move_opponent["heal"] + self.battlestate["hp"][opponent_id])
             dmg1 = self.calculate_damage(pet1, pet2, move_challenger, challenger_id, opponent_id)
             dmg2 = self.calculate_damage(pet2, pet1, move_opponent, opponent_id, challenger_id)
 
+            if (move_challenger["skilltype"] == "Stun"):
+                self.battlestate["stunned"][challenger_id] = move_challenger["numInstances"]
+            if (move_opponent["skilltype"] == "Stun"):
+                self.battlestate["stunned"][opponent_id] = move_opponent["numInstances"]
             if(priority == pet1):
-                self.battlestate["hp"][opponent_id] -= dmg1
+                if(move_opponent["skilltype"] != "Dodge"):
+                    self.battlestate["hp"][opponent_id] -= dmg1
                 if(self.battlestate["hp"][opponent_id] <= 0):
                     return await self.battle_end(pet1,pet2,self.challenger, self.opponent)
-                self.battlestate["hp"][challenger_id] -= dmg2
+                if(move_challenger["skilltype"] != "Dodge"):
+                    self.battlestate["hp"][challenger_id] -= dmg2
             else:
-                self.battlestate["hp"][challenger_id] -= dmg2
+                if(move_challenger["skilltype"] != "Dodge"):
+                    self.battlestate["hp"][challenger_id] -= dmg2
                 if(self.battlestate["hp"][challenger_id] <= 0):
                     return await self.battle_end(pet2,pet1,self.opponent, self.challenger)
-                self.battlestate["hp"][opponent_id] -= dmg1
+                if(move_opponent["skilltype"] != "Dodge"):
+                    self.battlestate["hp"][opponent_id] -= dmg1
             if(self.battlestate["hp"][opponent_id] <= 0):
                     return await self.battle_end(pet1,pet2,self.challenger, self.opponent)
             if(self.battlestate["hp"][challenger_id] <= 0):
