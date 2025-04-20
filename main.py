@@ -1,4 +1,4 @@
-token = "ENTER YOUR TOKEN"
+token = "ENTER TOKEN HERE"
 from Structures.Client import HackniteClient
 import discord
 
