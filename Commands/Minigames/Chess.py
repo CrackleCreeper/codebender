@@ -85,7 +85,6 @@ class Chess:
         file = discord.File(image_path, filename="board.png")
         await message.channel.send(
             content=f"♟ *{side} to move.* Guess the best move in this position (e.g. e4, Nf3, Qxe5). Type cancel to end.",
-            content=f"♟ *{side} to move.* Guess the best move in this position (e.g. e4, Nf3, Qxe5). Type cancel to end.",
             file=file
         )
 
