@@ -11,8 +11,9 @@ class catch:
         self.category = "Map"
         self.number_args = 1
         self.cooldown = 5 * 60
-        self.description = "Command to catch the user when they are sneaking into another guild. Use !catch <user>. If the user catches the trespasser and wins the battle, the user gains 400 coins and the trespasser is sent back to their home guild. Otherwise if they lose, the trespasser's travelling fee is paid for and they stay."
+        self.description = "Command to catch the user when they are sneaking into another guild. Use !catch <user>."
         self.user_permissions = []
+
     async def run(self, message, args, client):
         person = message.author.id 
         hunter = client.usersCollection.find_one({"_id": person})
