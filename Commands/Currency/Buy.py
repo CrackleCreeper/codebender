@@ -323,13 +323,7 @@ class Buy:
             if userData["money"] < cost:
                 return await message.channel.send(embed=Message(description="You don't have enough money to buy this skill."))
 
-            client.usersCollection.update_one(
-                {"_id": message.author.id},
-                {
-                    "$inc": {"money": -cost}
-                }
-            )
-
+            # Ask user which skill to replace
             await message.channel.send(embed=Message(description=f"Which skill would you like to replace on {pet_name}? Please type the skill's name."))
 
             def check(m):
@@ -353,18 +347,27 @@ class Buy:
                     return await message.channel.send(
                         embed=Message(description=f"{move_to_replace} not found on {user_pet['name']}."))
 
+                # Remove the old move
                 client.usersCollection.update_one(
                     {"_id": message.author.id, "pets.name": user_pet['name']},
                     {
-                        "$pull": {"pets.$.moves": {"name": move_to_replace}},  # Remove the old move
-                        "$inc": {"money": -cost}  # Deduct the cost of the skill
+                        "$pull": {"pets.$.moves": {"name": move_to_replace}}  # Remove the old move
                     }
                 )
+
+                # Add the new skill to the pet and deduct money
                 client.usersCollection.update_one(
                     {"_id": message.author.id, "pets.name": user_pet['name']},
                     {
-                        "$push": {"pets.$.moves": skill},  # Remove the old move
-                        "$inc": {"money": -cost}  # Deduct the cost of the skill
+                        "$push": {"pets.$.moves": skill}  # Add the new skill
+                    }
+                )
+
+                # Deduct the cost only once after the transaction is confirmed
+                client.usersCollection.update_one(
+                    {"_id": message.author.id},
+                    {
+                        "$inc": {"money": -cost}  # Deduct the cost
                     }
                 )
 
@@ -372,6 +375,7 @@ class Buy:
 
             except asyncio.TimeoutError:
                 return await message.channel.send(embed=Message(description="You took too long to respond. The move replacement has been cancelled."))
+
         else:
             if len(args) < 1:
                 return await message.channel.send(embed=Message(description="Please provide an item ID."))
@@ -390,12 +394,11 @@ class Buy:
             tier = tier_map[tier_number]
 
             shop_data = {
-                'fire': shop_data_fire,
-                'water': shop_data_water,
-                'air': shop_data_air,
-                'earth': shop_data_earth
+                'fire': fired,
+                'water': waterd,
+                'air': aird,
+                'earth': earthd
             }[element]
-
 
             shop_items = shop_data.get(tier, [])
             item = next((i for i in shop_items if i['itemID'] == item_id), None)
@@ -424,11 +427,21 @@ class Buy:
                     pet_data["name"] = msg.content
                 except asyncio.TimeoutError:
                     return await message.channel.send(embed=Message(description="You took too long."))
+
+            # Add the new pet to the user's collection and deduct money
             client.usersCollection.update_one(
                 {"_id": message.author.id},
                 {
-                    "$push": {"pets": pet_data},
-                    "$inc": {"money": -cost}
+                    "$push": {"pets": pet_data}  # Add the new pet
                 }
             )
+
+            # Deduct the cost of the pet purchase
+            client.usersCollection.update_one(
+                {"_id": message.author.id},
+                {
+                    "$inc": {"money": -cost}  # Deduct the cost once
+                }
+            )
+
             return await message.channel.send(embed=Message(description=f"Successfully purchased {pet_data['name']}!"))
