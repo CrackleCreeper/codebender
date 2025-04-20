@@ -12,18 +12,19 @@ class battlesystem:
         self.opponent = opponent
         self.challenger = challenger
         self.battlestate = {}
-        self.output_path=f"PICTURES/battle_preview{self.challenger["_id"]}.png"
-
+        self.output_path = f"PICTURES/battle_preview{self.challenger['_id']}.png"
+        self.battle_started = False
 
 
     async def battlestart(self):
         pets1 = self.challenger.get("pets", [])
         pets2 = self.opponent.get("pets", [])
 
-        # Get members for challenger and opponent to mention them properly
+        # Get Discord members
         challenger_member = self.message.guild.get_member(self.challenger['_id'])
         opponent_member = self.message.guild.get_member(self.opponent['_id'])
 
+        # Embed showing both players' pets (no buttons yet)
         embed1 = discord.Embed(title=f"{challenger_member.display_name}'s pets", color=discord.Color.green())
         for i, pet in enumerate(pets1, start=1):
             embed1.add_field(name=f"{i}. {pet['name']}", value=pet["rarity"], inline=True)
@@ -32,41 +33,13 @@ class battlesystem:
         for i, pet in enumerate(pets2, start=1):
             embed2.add_field(name=f"{i}. {pet['name']}", value=pet["rarity"], inline=True)
 
+        await self.message.channel.send(embeds=[embed1, embed2])
+
+        # --- STEP 1: Challenger Chooses ---
         challenger_choice = None
-        opponent_choice = None
-        selection_event = asyncio.Event()
-
-        # Create two separate views for challenger and opponent
         challenger_view = View(timeout=60)
-        opponent_view = View(timeout=60)
+        challenger_event = asyncio.Event()
 
-        async def check_done(interaction):
-            if challenger_choice and opponent_choice:
-                selection_event.set()
-                await interaction.message.edit(view=None)
-                await self.message.channel.send(
-                    f"⚔️ Both players have selected!\n"
-                    f"**{challenger_member.mention}** chose: `{challenger_choice[1]}`\n"
-                    f"**{opponent_member.mention}** chose: `{opponent_choice[1]}`"
-                )
-                pet1 = pets1[challenger_choice[0]-1]
-                pet2 = pets2[opponent_choice[0]-1]
-                self.battlestate = {
-                "hp":{
-                    self.challenger["_id"] : pet1["base_hp"],
-                    self.opponent["_id"] : pet2["base_hp"]
-                },
-                "buffs" : {},
-                "status_effects" : {},
-                "used_abilities" : set(),
-                "ongoing_effects": {
-                    self.challenger["_id"] : [],
-                    self.opponent["_id"] : []
-                }
-                }
-                await self.battling(pet1,pet2,self.message,self.client)
-
-        # Challenger's buttons
         for i, pet in enumerate(pets1, start=1):
             async def make_callback(interaction, index=i, pet_name=pet["name"]):
                 nonlocal challenger_choice
@@ -75,12 +48,28 @@ class battlesystem:
                 if not challenger_choice:
                     challenger_choice = (index, pet_name)
                     await interaction.response.send_message(f"✅ You selected pet #{index}: **{pet_name}**", ephemeral=True)
-                    await check_done(interaction)
-            btn = Button(label=f"{i}", style=discord.ButtonStyle.green, custom_id=f"challenger_{i}")
+                    challenger_event.set()
+
+            btn = Button(label=f"{i}", style=discord.ButtonStyle.green)
             btn.callback = make_callback
             challenger_view.add_item(btn)
 
-        # Opponent's buttons
+        await self.message.channel.send(
+            content=f"{challenger_member.mention}, choose your pet:",
+            view=challenger_view
+        )
+
+        try:
+            await asyncio.wait_for(challenger_event.wait(), timeout=60)
+        except asyncio.TimeoutError:
+            await self.message.channel.send("⏰ Challenger didn't pick in time. Battle cancelled.")
+            return
+
+        # --- STEP 2: Opponent Chooses ---
+        opponent_choice = None
+        opponent_view = View(timeout=60)
+        opponent_event = asyncio.Event()
+
         for i, pet in enumerate(pets2, start=1):
             async def make_callback(interaction, index=i, pet_name=pet["name"]):
                 nonlocal opponent_choice
@@ -89,22 +78,48 @@ class battlesystem:
                 if not opponent_choice:
                     opponent_choice = (index, pet_name)
                     await interaction.response.send_message(f"✅ You selected pet #{index}: **{pet_name}**", ephemeral=True)
-                    await check_done(interaction)
-            btn = Button(label=f"{i}", style=discord.ButtonStyle.blurple, custom_id=f"opponent_{i}")
+                    opponent_event.set()
+
+            btn = Button(label=f"{i}", style=discord.ButtonStyle.blurple)
             btn.callback = make_callback
             opponent_view.add_item(btn)
 
-        # Send messages with different views for each player
-        msg1 = await self.message.channel.send(embed=embed1, view=challenger_view)
-        msg2 = await self.message.channel.send(embed=embed2, view=opponent_view)
+        await self.message.channel.send(
+            content=f"{opponent_member.mention}, now choose your pet:",
+            view=opponent_view
+        )
 
         try:
-            await asyncio.wait_for(selection_event.wait(), timeout=60)
+            await asyncio.wait_for(opponent_event.wait(), timeout=60)
         except asyncio.TimeoutError:
-            if not selection_event.is_set():
-                await msg1.edit(view=None)
-                await msg2.edit(view=None)
-                await self.message.channel.send("⏰ Battle cancelled — one or both players didn’t pick in time.")
+            await self.message.channel.send("⏰ Opponent didn't pick in time. Battle cancelled.")
+            return
+
+        # --- Proceed to Battle ---
+        pet1 = pets1[challenger_choice[0] - 1]
+        pet2 = pets2[opponent_choice[0] - 1]
+
+        await self.message.channel.send(
+            f"⚔️ Both players have selected!\n"
+            f"**{challenger_member.mention}** chose: `{pet1['name']}`\n"
+            f"**{opponent_member.mention}** chose: `{pet2['name']}`"
+        )
+
+        self.battlestate = {
+            "hp": {
+                self.challenger["_id"]: pet1["base_hp"],
+                self.opponent["_id"]: pet2["base_hp"]
+            },
+            "buffs": {},
+            "status_effects": {},
+            "used_abilities": set(),
+            "ongoing_effects": {
+                self.challenger["_id"]: [],
+                self.opponent["_id"]: []
+            }
+        }
+
+        await self.battling(pet1, pet2, self.message, self.client)
 
     async def prompt_move_selection(self, user_id, pet, message):
         view = discord.ui.View(timeout=60)
@@ -150,12 +165,12 @@ class battlesystem:
             self.battlestate["buffs"][defender_id]["defense"] -= move["defreduction"]
 
         
-        # if move["numInstances"] > 1 and move["power"] > 0:
-        #     self.battlestate["ongoing_effects"][defender].append({
-        #         "name": move["name"],
-        #         "power": move["power"],
-        #         "turns_left": move["numInstances"]
-        #     })
+        if move["numInstances"] > 1 and move["power"] > 0:
+            self.battlestate["ongoing_effects"][defender_id].append({
+                "name": move["name"],
+                "power": move["power"],
+                "turns_left": move["numInstances"]
+            })
     def draw_hp_bar(self, draw, x, y, width, height, current_hp, max_hp):
         """Draws an HP bar with a black border that shows empty when HP is negative."""
         # Draw the border
@@ -235,8 +250,9 @@ class battlesystem:
         return total_damage
 
     def calculate_damage(self, attacker, defender, move,chal, defen):
-        self.apply_move_effects(move,attacker,defender)
-        atk = max(5,(attacker["attack"] + self.battlestate["buffs"][chal]["attack"]) * move["power"]  / 100 - (defender["defense"] + self.battlestate["buffs"][defen]["defense"])+self.process_ongoing_effects(defen))
+        self.apply_move_effects(move,chal,defen)
+        atk = max(0,(attacker["attack"] + self.battlestate["buffs"][chal]["attack"])  * move["power"]  / (defender["defense"] + self.battlestate["buffs"][defen]["defense"])+self.process_ongoing_effects(defen) - 5)
+        print(atk)
         return atk
     
     async def battling(self, pet1 ,pet2, message, client):
@@ -268,17 +284,17 @@ class battlesystem:
             if(priority == pet1):
                 self.battlestate["hp"][opponent_id] -= dmg1
                 if(self.battlestate["hp"][opponent_id] <= 0):
-                    self.battle_end(self.challenger, self.opponent)
+                    return await self.battle_end(pet1,pet2,self.challenger, self.opponent)
                 self.battlestate["hp"][challenger_id] -= dmg2
             else:
                 self.battlestate["hp"][challenger_id] -= dmg2
                 if(self.battlestate["hp"][challenger_id] <= 0):
-                    await self.battle_end(self.opponent, self.challenger, message)
+                    return await self.battle_end(pet2,pet1,self.opponent, self.challenger)
                 self.battlestate["hp"][opponent_id] -= dmg1
             if(self.battlestate["hp"][opponent_id] <= 0):
-                    await self.battle_end(self.challenger, self.opponent, message)
+                    return await self.battle_end(pet1,pet2,self.challenger, self.opponent)
             if(self.battlestate["hp"][challenger_id] <= 0):
-                    await self.battle_end(self.opponent, self.challenger, message)
+                    return await self.battle_end(pet2,pet1,self.opponent, self.challenger)
             self.generate_battle_image(pet1,pet2)
             file = discord.File(self.output_path, filename="battle.png")
             image_embed = discord.Embed(title=f"⚔ Battle: {pet1['name']} vs {pet2['name']}")
@@ -286,10 +302,10 @@ class battlesystem:
             status_text = (
                 f"**Turn {turn}**\n\n"
                 f"🟢 **{pet1['name']}**\n"
-                f"HP: {max(0, self.battlestate['hp'][challenger_id])}/{pet1['base_hp']} | ATK Buff: {self.battlestate['buffs'][challenger_id]['attack']} | DEF Buff: {self.battlestate['buffs'][challenger_id]['defense']}\n"
+                f"HP: {max(0, self.battlestate['hp'][challenger_id]//1)}/{pet1['base_hp']} | ATK Buff: {self.battlestate['buffs'][challenger_id]['attack']} | DEF Buff: {self.battlestate['buffs'][challenger_id]['defense']}\n"
                 f"Last Move: `{move_challenger['name']}`\n\n"
                 f"🔵 **{pet2['name']}**\n"
-                f"HP: {max(0, self.battlestate['hp'][opponent_id])}/{pet2['base_hp']} | ATK Buff: {self.battlestate['buffs'][opponent_id]['attack']} | DEF Buff: {self.battlestate['buffs'][opponent_id]['defense']}\n"
+                f"HP: {max(0, self.battlestate['hp'][opponent_id]//1)}/{pet2['base_hp']} | ATK Buff: {self.battlestate['buffs'][opponent_id]['attack']} | DEF Buff: {self.battlestate['buffs'][opponent_id]['defense']}\n"
                 f"Last Move: `{move_opponent['name']}`"
             )
             detail_embed = discord.Embed(title=f"Turn {turn}", description=status_text, color=discord.Color.green())
@@ -297,5 +313,14 @@ class battlesystem:
             
             turn += 1
     
-    async def battle_end(self , winner , loser, message):
-        await message.channel.send(f"{winner["_id"].display_name} - winner, {loser["_id"].display_name} - loser")
+    async def battle_end(self ,pet1,pet2, winner , loser):
+            challenger_member = self.message.guild.get_member(winner['_id'])
+            opponent_member = self.message.guild.get_member(loser['_id'])
+            self.output_path = pet1["image"]
+            file = discord.File(self.output_path, filename="battle.png")
+            image_embed = discord.Embed(title=f"{challenger_member.display_name} WINS!!")
+            image_embed.set_image(url="attachment://battle.png")
+            await self.message.channel.send(file = file, embed = image_embed)
+
+
+        

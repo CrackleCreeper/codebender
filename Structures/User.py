@@ -2,6 +2,8 @@ import random
 import json
 with open("./Structures/Pets.json", "r") as f:
     pets = json.load(f)
+with open("./Structures/Skills.json", "r") as f:
+    skills = json.load(f)
 class User:
     def __init__(self, userID, client, money=100, level= 0, cosmetics = []):
         self.userID = userID
@@ -23,14 +25,30 @@ class User:
             self.homeGuild = "Fire"
 
         if self.homeGuild == "Earth" : 
-            self.pets.append(pets["earth"][0])
+            pet = pets["earth"][0]
+            for i in range(3):
+                move = pet["moves"][i]
+                pet["moves"][i] = next(skill for skill in skills[move["type"].lower()] if skill["name"] == move["name"])
+            self.pets.append(pet)
         elif self.homeGuild == "Air" : 
-            self.pets.append(pets["air"][0])
+            pet = pets["air"][0]
+            for i in range(3):
+                move = pet["moves"][i]
+                pet["moves"][i] = next(skill for skill in skills[move["type"].lower()] if skill["name"] == move["name"])
+            self.pets.append(pet)
         elif self.homeGuild == "Water" : 
-            self.pets.append(pets["water"][0])
+            pet = pets["water"][0]
+            for i in range(3):
+                move = pet["moves"][i]
+                pet["moves"][i] = next(skill for skill in skills[move["type"].lower()] if skill["name"] == move["name"])
+            self.pets.append(pet)
         elif self.homeGuild == "Fire" : 
-            self.pets.append(pets["fire"][0])
-        
+            pet = pets["fire"][0]
+            for i in range(3):
+                move = pet["moves"][i]
+                pet["moves"][i] = next(skill for skill in skills[move["type"].lower()] if skill["name"] == move["name"])
+            self.pets.append(pet)
+
         self.client.guildsCollection.update_one({"_id": self.homeGuild}, {"$push": {"members": self.userID}})
         self.visitingGuild = self.homeGuild
     def to_dict(self):
