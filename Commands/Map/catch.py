@@ -83,7 +83,6 @@ class catch:
                 winner = await ba.battlestart()
                 print(winner)
                 if(winner["_id"] == hunter["_id"]):
-                    print("e")
                     client.usersCollection.update_one({"_id": hunter["_id"]}, {"$inc": {"money": 400}})
                     
                     if prey["money"] < 400:
