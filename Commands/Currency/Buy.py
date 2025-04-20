@@ -233,7 +233,7 @@ class Buy:
 
             # Fetch the skill and cost from the skill map
             skill, move_name = skill_map[item_id]
-            cost = 100  # Assuming a fixed price for simplicity
+            cost = 100
 
             if userData["money"] < cost:
                 return await message.channel.send(embed=Message(description="You don't have enough money to buy this skill."))

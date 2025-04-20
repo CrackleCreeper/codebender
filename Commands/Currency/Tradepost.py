@@ -132,8 +132,10 @@ class PetSelectView(View):
         
         # List skills
         skills_text = ""
-        for move in selected_pet["moves"]:
-            skills_text += f"• {move['name']} ({move['type']})\n"
+        for move in selected_pet.get("moves", []):
+            move_name = move.get("name", "Unknown")
+            move_type = move.get("type", "Unknown")
+            skills_text += f"• {move_name} ({move_type})\n"
         
         embed.add_field(name="Skills", value=skills_text or "No special skills", inline=False)
         
