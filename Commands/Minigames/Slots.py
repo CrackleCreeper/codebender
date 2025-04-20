@@ -11,6 +11,7 @@ class Slots:
         self.category = "Minigames"
         self.description = "Spin the slot machine and try your luck with rarities and diagonals! Type !slots <bet> to play. Get the amount of coins you bet if you win, or lose it all!"
         self.number_args = 1
+        self.cooldown = 30
         self.user_permissions = []
 
         self.emoji_weights = {

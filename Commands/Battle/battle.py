@@ -11,6 +11,7 @@ class battle:
         self.category = "Battle"
         self.description = "command to check currency owned"
         self.number_args = 1
+        self.cooldown = 30
         self.user_permissions = []
 
     async def run(self, message, args, client):

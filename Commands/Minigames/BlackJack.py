@@ -10,6 +10,7 @@ class BlackJack:
         self.category = "Minigames"
         self.description = "Play blackjack to earn coins. Use !bj <bet amount>."
         self.number_args = 1
+        self.cooldown = 30
         self.user_permissions = []
 
     def draw_card(self):
