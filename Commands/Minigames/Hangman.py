@@ -9,6 +9,7 @@ class Hangman:
         self.category = "Minigames"
         self.description = "Play hangman. Win 25 coins!"
         self.number_args = 0
+        self.cooldown = 30
         self.user_permissions = []
 
         self.in_game = set()

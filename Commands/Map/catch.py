@@ -9,6 +9,7 @@ class catch:
         self.name = "catch"
         self.category = "Map"
         self.number_args = 1
+        self.cooldown = 5 * 60
         self.description = "Command to catch the user when they are sneaking into another guild. Use !catch <user>."
         self.user_permissions = []
 
