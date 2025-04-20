@@ -65,6 +65,9 @@ class Chess:
         with WandImage(blob=svg_data.encode('utf-8'), format='svg', background=Color("white")) as img:
             img.format = 'png'
             img.save(filename=filename)
+        with WandImage(blob=svg_data.encode('utf-8'), format='svg', background=Color("white")) as img:
+            img.format = 'png'
+            img.save(filename=filename)
 
     async def run(self, message, args, client):
         if message.author.id in chess_games:

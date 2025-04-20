@@ -88,3 +88,4 @@ Winning battles gives your pet exp, which increases its' level when it accumulat
 3. AI arcade assistants
 4. More pets and skills
 5. Choice-based quests and story mode
+6. Gacha system

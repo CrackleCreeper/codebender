@@ -501,7 +501,7 @@ def create_detailed_listing_embed(listing):
     
     return embed
 
-class TradePost:
+class Tradepost:
     def __init__(self):
         self.name = "tradepost"
         self.aliases = ["tp", "trade"]
