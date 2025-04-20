@@ -5,19 +5,18 @@ import chess.engine
 import random
 import os
 import chess.svg
-from wand.image import Image as WandImage
-from wand.color import Color
+import cairosvg
 import asyncio
 
 chess_games = {}
 win_amount = 20
+
 class Chess:
     def __init__(self):
         self.name = "chessguess"
         self.category = "Minigames"
         self.description = "Guess the best move in a random chess position! Win 20 coins!"
         self.number_args = 0
-        self.cooldown = 30
         self.user_permissions = []
 
     def get_random_tactical_position(self, depth=12, min_cp_diff=100):
@@ -52,7 +51,6 @@ class Chess:
     def get_random_position(self):
         return self.get_random_tactical_position()
 
-
     def get_best_move(self, board):
         stockfish_path = os.path.join(os.path.dirname(__file__), "stockfish.exe")
         engine = chess.engine.SimpleEngine.popen_uci(stockfish_path)
@@ -63,9 +61,7 @@ class Chess:
 
     def save_board_as_png(self, board, filename="board.png"):
         svg_data = chess.svg.board(board=board, orientation=board.turn)
-        with WandImage(blob=svg_data.encode('utf-8'), format='svg', background=Color("white")) as img:
-            img.format = 'png'
-            img.save(filename=filename)
+        cairosvg.svg2png(bytestring=svg_data.encode('utf-8'), write_to=filename, background_color="white")
 
     async def run(self, message, args, client):
         if message.author.id in chess_games:

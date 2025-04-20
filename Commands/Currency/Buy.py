@@ -5,7 +5,78 @@ import asyncio
 import json
 with open("./Structures/Skills.json", "r") as f:
     skills = json.load(f)
-# Fire moves, water moves, air moves, and earth moves as per your provided data
+fired = {
+    "Rare": [
+        {"name": "Deco1", "price": 20, "itemID": 'FD1'},
+        {"name": "Smokescreen", "price": 50, "itemID": 'FS1'},
+        {"name": "Komodo Rhino", "price": 40, "itemID": 'FP1'}
+    ],
+    "Epic": [
+        {"name": "Deco2", "price": 100, "itemID": 'FD2'},
+        {"name": "Floor Is Lava", "price": 250, "itemID": 'FS2'},
+        {"name": "Phoenix", "price": 200, "itemID": 'FP2'}
+    ],
+    "Legendary": [
+        {"name": "Deco3", "price": 1000, "itemID": 'FD3'},
+        {"name": "Fireball", "price": 2000, "itemID": 'FS3'},
+        {"name": "Dragon", "price": 1800, "itemID": 'FP3'}
+    ]
+}
+
+waterd = {
+    "Rare": [
+        {"name": "Deco1", "price": 20, "itemID": 'WD1'},
+        {"name": "Liquid Mirror", "price": 50, "itemID": 'WS1'},
+        {"name": "Dolphin Piranha", "price": 40, "itemID": 'WP1'}
+    ],
+    "Epic": [
+        {"name": "Deco2", "price": 100, "itemID": 'WD2'},
+        {"name": "Freeze", "price": 250, "itemID": 'WS2'},
+        {"name": "Tiger Shark", "price": 200, "itemID": 'WP2'}
+    ],
+    "Legendary": [
+        {"name": "Deco3", "price": 1000, "itemID": 'WD3'},
+        {"name": "Holy Water", "price": 2000, "itemID": 'WS3'},
+        {"name": "Kraken", "price": 1800, "itemID": 'WP3'}
+    ]
+}
+
+aird = {
+    "Rare": [
+        {"name": "Deco1", "price": 20, "itemID": 'AD1'},
+        {"name": "Aircutter", "price": 50, "itemID": 'AS1'},
+        {"name": "Ring -Tailed Winged Lemur", "price": 40, "itemID": 'AP1'}
+    ],
+    "Epic": [
+        {"name": "Deco2", "price": 100, "itemID": 'AD2'},
+        {"name": "Gale Strike", "price": 250, "itemID": 'AS2'},
+        {"name": "Spider Bat", "price": 200, "itemID": 'AP2'}
+    ],
+    "Legendary": [
+        {"name": "Deco3", "price": 1000, "itemID": 'AD3'},
+        {"name": "Whirlwind", "price": 2000, "itemID": 'AS3'},
+        {"name": "Flying Bison", "price": 1800, "itemID": 'AP3'}
+    ]
+}
+
+earthd = {
+    "Rare": [
+        {"name": "Deco1", "price": 20, "itemID": 'ED1'},
+        {"name": "Photosynthesis", "price": 50, "itemID": 'ES1'},
+        {"name": "Eel Sand Shark", "price": 40, "itemID": 'EP1'}
+    ],
+    "Epic": [
+        {"name": "Deco2", "price": 100, "itemID": 'ED2'},
+        {"name": "Earthquake", "price": 250, "itemID": 'ES2'},
+        {"name": "Spider Snake", "price": 200, "itemID": 'EP2'}
+    ],
+    "Legendary": [
+        {"name": "Deco3", "price": 1000, "itemID": 'ED3'},
+        {"name": "Earthen Wall", "price": 2000, "itemID": 'ES3'},
+        {"name": "Shirshu", "price": 1800, "itemID": 'EP3'}
+    ]
+}
+
 fire_moves = {
     "Floor Is Lava": {"name": "Floor Is Lava",
             "skilltype": "Attack",
@@ -194,9 +265,25 @@ class Buy:
     def __init__(self):
         self.name = "buy"
         self.description = "Buy something from your guild shop. Use !buy <itemID> <petName> to buy a skill. Afterward, you will be prompted to replace an existing skill."
-        self.number_args = 1  # Expecting 2 arguments (itemID and petName)
+        self.number_args = 1
         self.category = "Currency"
         self.user_permissions = []
+
+    def find_price_by_itemID(self, itemID):
+        shop_data = {
+            'fire': fired,
+            'water': waterd,
+            'air': aird,
+            'earth': earthd
+        }
+
+        for element, data in shop_data.items():
+            for tier, items in data.items():
+                for item in items:
+                    if item['itemID'] == itemID:
+                        return item['price']
+
+        return None
 
     async def run(self, message, args, client):
         itemIDS = [
@@ -227,13 +314,11 @@ class Buy:
                 return await message.channel.send(embed=Message(description="Enter a valid ID"))
             if not element.lower() == userData["visitingGuild"].lower():
                 return await message.channel.send(embed=Message(description="You can only buy something from the guild you are visiting in."))
-            # Check if item is a skill purchase
             if item_id not in skill_map:
                 return await message.channel.send(embed=Message(description="Skill ID not valid."))
 
-            # Fetch the skill and cost from the skill map
             skill, move_name = skill_map[item_id]
-            cost = 100  # Assuming a fixed price for simplicity
+            cost = self.find_price_by_itemID(item_id)
 
             if userData["money"] < cost:
                 return await message.channel.send(embed=Message(description="You don't have enough money to buy this skill."))
@@ -245,7 +330,6 @@ class Buy:
                 }
             )
 
-            # Ask user which move they want to replace
             await message.channel.send(embed=Message(description=f"Which skill would you like to replace on {pet_name}? Please type the skill's name."))
 
             def check(m):
@@ -256,23 +340,19 @@ class Buy:
 
                 move_to_replace = move_to_replace_msg.content.strip()
 
-                # Check if the move exists on the pet
                 user_pet = next(
                     (obj for obj in userData["pets"] if obj["name"].lower().strip() == pet_name.lower().strip()), None)
 
                 if user_pet is None:
                     return await message.channel.send(embed=Message(description=f"No pet named {pet_name} found."))
 
-                # Ensure the pet has moves
                 if not user_pet.get('moves'):
                     return await message.channel.send(embed=Message(description=f"{pet_name} has no moves to replace."))
 
-                # Check if the move to replace exists in the pet's moves
                 if not any(m['name'].lower() == move_to_replace.lower() for m in user_pet['moves']):
                     return await message.channel.send(
                         embed=Message(description=f"{move_to_replace} not found on {user_pet['name']}."))
 
-                # Replace the move in the database
                 client.usersCollection.update_one(
                     {"_id": message.author.id, "pets.name": user_pet['name']},
                     {
@@ -330,11 +410,20 @@ class Buy:
             if userData['money'] < cost:
                 return await message.channel.send(embed=Message(description="You don't have enough money."))
 
-
             for i in range(3):
                 move = pet_data["moves"][i]
                 pet_data["moves"][i] = next(skill for skill in skills[element] if skill["name"] == move["name"])
+            already_has_pet = next((i for i in userData["pets"] if i['name'] == pet_data["name"]), None)
 
+            def check(m):
+                return m.author == message.author and m.channel == message.channel
+            if already_has_pet:
+                await message.channel.send(embed=Message(description=f"You already have {pet_data['name']}!, hence enter a name to rename the new pet."))
+                try:
+                    msg = await client.wait_for('message', timeout=60.0, check=check)
+                    pet_data["name"] = msg.content
+                except asyncio.TimeoutError:
+                    return await message.channel.send(embed=Message(description="You took too long."))
             client.usersCollection.update_one(
                 {"_id": message.author.id},
                 {
