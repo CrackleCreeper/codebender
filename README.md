@@ -62,6 +62,20 @@ Utkarsh Goyal (BT2024264)
 * A rich *turn-based battle system* (```!battle <user>```) where users can pit their pets against each other for coins, using their skills!
 * The bot stores data player information such as guild, pets, cosmetics etc in a MongoDB database, which is queried and updated globally.
 
+## Battle System
+Pet are classified into four tiers: common (given on user initialisation), rare, epic, and legendary. These can be purchased new from shop and from other users from the tradepost. Each pet has three skills which can be used in battle: they can be replaced from skills bought from the shop. Skills are of two types: Burst and Basic. Basic attacks can be used every turn (with the exception of Stun and Heal type attacks), and Burst attacks can be used once every four turns. Moves are capable of the following:
+
+* Reducing opponent HP
+* Reducing opponent attack power
+* Reducing opponent defense power
+* Buffing personal attack power
+* Buffing personal defense power
+* Healing self
+* Stunning the opponent for one move
+* Dodging an attack
+
+Winning battles gives your pet exp, which increases its' level when it accumulates. Level increases buff base stats of pets.
+
 ## Tech Stack
 * Discord.py
 * MongoDB
