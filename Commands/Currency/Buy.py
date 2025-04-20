@@ -319,13 +319,20 @@ class Buy:
 
             skill, move_name = skill_map[item_id]
             cost = self.find_price_by_itemID(item_id)
+            user_pet = next(
+                    (obj for obj in userData["pets"] if obj["name"].lower().strip() == pet_name.lower().strip()), None)
+            l = list()
+            for moves in user_pet["moves"]:
+                l.append(moves["name"])
 
+            
             if userData["money"] < cost:
                 return await message.channel.send(embed=Message(description="You don't have enough money to buy this skill."))
 
             # Ask user which skill to replace
             await message.channel.send(embed=Message(description=f"Which skill would you like to replace on {pet_name}? Please type the skill's name."))
 
+            await message.channel.send(embed=Message(description=f"Your pet has the following moves: \n {", ".join(l)}"))
             def check(m):
                 return m.author == message.author and isinstance(m.channel, discord.TextChannel)
 
@@ -334,8 +341,7 @@ class Buy:
 
                 move_to_replace = move_to_replace_msg.content.strip()
 
-                user_pet = next(
-                    (obj for obj in userData["pets"] if obj["name"].lower().strip() == pet_name.lower().strip()), None)
+                
 
                 if user_pet is None:
                     return await message.channel.send(embed=Message(description=f"No pet named {pet_name} found."))

@@ -15,6 +15,7 @@ class battlesystem:
         self.battlestate = {}
         self.output_path = f"PICTURES/battle_preview{self.challenger['_id']}.png"
         self.battle_started = False
+        self.winner = None
 
 
     async def battlestart(self):
@@ -184,7 +185,7 @@ class battlesystem:
 
         # Assuming throttling is tracked for each skill type (adjust this based on your logic)
         throttle_burst = self.battlestate["throttle"]["burst"].get(user_id, 0)
-        throttle_heal = self.battlestate["throttle"]["stun"].get(user_id, 0)
+        throttle_stun = self.battlestate["throttle"]["stun"].get(user_id, 0)
         throttle_dodge = self.battlestate["throttle"]["dodge"].get(user_id, 0)
 
         available_moves = []
@@ -193,7 +194,7 @@ class battlesystem:
             # Skip moves if they are throttled
             if move.get("atktype") == "Burst" and throttle_burst > 0:
                 continue
-            if move.get("skilltype") == "Heal" and throttle_heal > 0:
+            if move.get("skilltype") == "Heal" and throttle_stun > 0:
                 continue
             if move.get("skilltype") == "Dodge" and throttle_dodge > 0:
                 continue
@@ -351,9 +352,9 @@ class battlesystem:
         total_damage = 0
         remaining = []
         for effect in self.battlestate["ongoing_effects"][defender]:
-            effect["numInstances"] -= 1
             if effect["numInstances"] > 1:
                 remaining.append(effect)
+
         for effect in remaining:
             damage = effect["power"]
             total_damage += damage
@@ -361,11 +362,26 @@ class battlesystem:
         return total_damage
 
     def calculate_damage(self, attacker, defender, move,chal, defen):
-        self.apply_move_effects(move,chal,defen)
-        atk = max(0,(attacker["attack"] + self.battlestate["buffs"][chal]["attack"]["value"] - self.battlestate["buffs"][chal]["atkreduction"]["value"])  * move["power"]  / (defender["defense"] + self.battlestate["buffs"][defen]["defense"]["value"] - self.battlestate["buffs"][defen]["defense"]["value"])+self.process_ongoing_effects(defen) - 5)
-        print(atk)
+        self.apply_move_effects(move, chal, defen)
+
+        # Get stats with buffs/debuffs
+        attacker_attack = attacker["attack"] + self.battlestate["buffs"][chal]["attack"]["value"] - self.battlestate["buffs"][chal]["atkreduction"]["value"]
+
+        defender_defense = defender["defense"] + self.battlestate["buffs"][defen]["defense"]["value"] - self.battlestate["buffs"][defen]["defreduction"]["value"]
+
+        defender_defense = max(1, defender_defense)
+
+        base_damage = (attacker_attack * move["power"]) / defender_defense
+
+        effect_damage = self.process_ongoing_effects(defen)
+
+
+        atk = max(5, base_damage + effect_damage )
+
+        print(f"Calculated Damage: {atk:.2f}")
         return atk
-    
+
+            
     async def battling(self, pet1 ,pet2, message, client):
         challenger_id = self.challenger["_id"]
         opponent_id = self.opponent["_id"]
@@ -431,15 +447,26 @@ class battlesystem:
             await asyncio.sleep(1)
             if self.battlestate["stunned"][challenger_id] == 0:
                 move_challenger = await self.prompt_move_selection(self.challenger["_id"], pet1, message)
-            if  self.battlestate["stunned"][opponent_id] == 0:
+                if(move_challenger == self.winner):
+                    return self.winner
+            if self.battlestate["stunned"][opponent_id] == 0:
                 move_opponent = await self.prompt_move_selection(self.opponent["_id"], pet2,message)
+                if(move_opponent == self.winner):
+                    return self.winner
             self.battlestate["ongoing_effects"][challenger_id].append(move_opponent)
             self.battlestate["ongoing_effects"][opponent_id].append(move_challenger)
             for throttle_type in throttle_types:
-                if(move_challenger["atktype"].capitalize() == throttle_type):
-                    self.battlestate["throttle"][throttle_type][challenger_id] = 3
-                if move_opponent["atktype"].capitalize() == throttle_type:
-                    self.battlestate["throttle"][throttle_type][opponent_id] = 3
+                if throttle_type == "burst":
+                    if(move_challenger["atktype"] == throttle_type.capitalize()):
+                        self.battlestate["throttle"][throttle_type][challenger_id] = 4
+                    if move_opponent["atktype"] == throttle_type.capitalize():
+                        self.battlestate["throttle"][throttle_type][opponent_id] = 4
+                else:
+                    if(move_challenger["skilltype"] == throttle_type.capitalize()):
+                        self.battlestate["throttle"][throttle_type][challenger_id] = 4
+                    if move_opponent["skilltype"] == throttle_type.capitalize():
+                        self.battlestate["throttle"][throttle_type][opponent_id] = 4
+
             if move_challenger["skilltype"] == "Heal":
                 self.battlestate["hp"][challenger_id] = min(self.challenger_pet["base_hp"], move_challenger["heal"] + self.battlestate["hp"][challenger_id])
             if move_opponent["skilltype"] == "Heal":
@@ -448,9 +475,9 @@ class battlesystem:
             dmg2 = self.calculate_damage(pet2, pet1, move_opponent, opponent_id, challenger_id)
 
             if (move_challenger["skilltype"] == "Stun"):
-                self.battlestate["stunned"][challenger_id] = move_challenger["numInstances"]
+                self.battlestate["stunned"][opponent_id] = move_challenger["numInstances"] + 1
             if (move_opponent["skilltype"] == "Stun"):
-                self.battlestate["stunned"][opponent_id] = move_opponent["numInstances"]
+                self.battlestate["stunned"][challenger_id] = move_opponent["numInstances"]  + 1
             if(priority == pet1):
                 if(move_opponent["skilltype"] != "Dodge"):
                     self.battlestate["hp"][opponent_id] -= dmg1
@@ -488,6 +515,7 @@ class battlesystem:
             turn += 1
         
     async def battle_end(self ,pet1,pet2, winner , loser):
+        self.winner = winner
         self.generate_battle_image(self.challenger_pet,self.opponent_pet)
         file = discord.File(self.output_path, filename="battle.png")
         image_embed = discord.Embed(title=f"⚔ Battle: {pet1['name']} vs {pet2['name']}")
@@ -518,5 +546,4 @@ class battlesystem:
         else:
             self.client.usersCollection.update_one({"_id" : winner["_id"], "pets.name" : pet1["name"]}, {"$inc" : {"pets.$.xp" : xp}})
         os.remove(f"PICTURES/battle_preview{self.challenger['_id']}.png")
-        print(winner)
         return winner

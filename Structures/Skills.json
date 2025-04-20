@@ -314,7 +314,7 @@
             "atkreduction": 2,
             "heal": 0,
             "dodge": false,
-            "numInstances": 2,
+            "numInstances": 1,
             "skipNextTurn": true
         },
         {
@@ -419,7 +419,7 @@
             "atkreduction": 6,
             "heal": 0,
             "dodge": false,
-            "numInstances": 2,
+            "numInstances": 1,
             "skipNextTurn": true
         },
         {
@@ -571,7 +571,7 @@
             "atkreduction": 0,
             "heal": 0,
             "dodge": false,
-            "numInstances": 2,
+            "numInstances": 1,
             "skipNextTurn": true
         },
         {
