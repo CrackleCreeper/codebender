@@ -412,7 +412,7 @@
             "skilltype": "Stun",
             "atktype": "Burst",
             "description": "Freezes the opponent for two turns, reducing their defense",
-            "power": 16,
+            "power": 10,
             "defreduction": 7,
             "defbuff": 0,
             "atkbuff": 0,
