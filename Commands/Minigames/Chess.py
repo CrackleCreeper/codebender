@@ -5,17 +5,17 @@ import chess.engine
 import random
 import os
 import chess.svg
-import cairosvg
+from wand.image import Image as WandImage
+from wand.color import Color
 import asyncio
 
 chess_games = {}
-win_amount = 20
-
+win_amount = 25
 class Chess:
     def __init__(self):
         self.name = "chessguess"
         self.category = "Minigames"
-        self.description = "Guess the best move in a random chess position! Win 20 coins!"
+        self.description = "Guess the best move in a random chess position!"
         self.number_args = 0
         self.user_permissions = []
 
@@ -51,6 +51,7 @@ class Chess:
     def get_random_position(self):
         return self.get_random_tactical_position()
 
+
     def get_best_move(self, board):
         stockfish_path = os.path.join(os.path.dirname(__file__), "stockfish.exe")
         engine = chess.engine.SimpleEngine.popen_uci(stockfish_path)
@@ -61,7 +62,9 @@ class Chess:
 
     def save_board_as_png(self, board, filename="board.png"):
         svg_data = chess.svg.board(board=board, orientation=board.turn)
-        cairosvg.svg2png(bytestring=svg_data.encode('utf-8'), write_to=filename, background_color="white")
+        with WandImage(blob=svg_data.encode('utf-8'), format='svg', background=Color("white")) as img:
+            img.format = 'png'
+            img.save(filename=filename)
 
     async def run(self, message, args, client):
         if message.author.id in chess_games:
@@ -78,7 +81,7 @@ class Chess:
 
         file = discord.File(image_path, filename="board.png")
         await message.channel.send(
-            content=f"♟️ **{side} to move.** Guess the best move in this position (e.g. `e4`, `Nf3`, `Qxe5`). Type `cancel` to end.",
+            content=f"♟ *{side} to move.* Guess the best move in this position (e.g. e4, Nf3, Qxe5). Type cancel to end.",
             file=file
         )
 
@@ -102,14 +105,14 @@ class Chess:
                 try:
                     user_move = board.parse_san(user_input)
                 except:
-                    await message.channel.send("❌ Invalid move format. Try again (e.g. `e4`, `Nf3`, `Qxe5`).")
+                    await message.channel.send("❌ Invalid move format. Try again (e.g. e4, Nf3, Qxe5).")
                     continue
 
                 if user_move == best_move:
                     await message.channel.send(f"✅ Correct! That’s the best move! You got {win_amount} coins!")
                     client.usersCollection.update_one({"_id": message.author.id}, {"$inc": {"money": win_amount}})
                 else:
-                    await message.channel.send(f"❌ Not quite. That was a legal move, but the best move was **{board.san(best_move)}**")
+                    await message.channel.send(f"❌ Not quite. That was a legal move, but the best move was *{board.san(best_move)}*")
                 break
 
         finally:
