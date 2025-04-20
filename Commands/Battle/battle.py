@@ -1,8 +1,6 @@
 from Structures.Message import Message
 import discord
 from discord.ui import View, Button
-import json
-import os
 from Structures.battlesystem import battlesystem
 class battle:
 
@@ -39,4 +37,10 @@ class battle:
             return await message.channel.send(embed=Message(description="You need to be in the same guild to battle!",color=discord.Color.dark_red()))
         
         ba = battlesystem(client,args,message,opponent,challenger)
-        await ba.battlestart()
+        winner = await ba.battlestart()
+        if(winner == challenger):
+            client.usersCollection.update_one({"_id": challenger["_id"]}, {"$inc": {"money": int(args[1])}})
+            client.usersCollection.update_one({"_id": opponent["_id"]}, {"$inc":{"money": -int(args[1])}})
+        else:
+            client.usersCollection.update_one({"_id": opponent["_id"]}, {"$inc": {"money": int(args[1])}})
+            client.usersCollection.update_one({"_id": challenger["_id"]}, {"$inc":{"money": -int(args[1])}})
