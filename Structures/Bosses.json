@@ -1,0 +1,34 @@
+{
+    "earth": {
+            "name": "Hei Bai",
+            "type": "Earth",
+            "base_hp": 120,
+            "attack": 35,
+            "defense": 25,
+            "speed": 50,
+            "image": "./PICTURES/HeiBai.png",
+            "description": "Guardian spirit of a forest that normally assumes the form of a panda bear, but transforms into an aggressive monster with six limbs when enraged",
+            "moves": [
+                {
+                    "name": "Six-Claw Assault",
+                    "type": "Earth"
+                },
+                {
+                    "name": "Frenzied Charge",
+                    "type": "Earth"
+                },
+                {
+                    "name": "Soothing Touch",
+                    "type": "Earth"
+                },
+                {
+                    "name": "Unbreakable Forest",
+                    "type": "Earth"
+                },
+                {
+                    "name": "Verdant Wrath",
+                    "type": "Earth"
+                }
+            ]
+    }
+}

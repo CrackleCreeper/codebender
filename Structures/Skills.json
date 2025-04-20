@@ -160,7 +160,7 @@
             "defbuff": 0,
             "atkbuff": 0,
             "atkreduction": 0,
-            "heal": 0,
+            "heal": -10,
             "dodge": true,
             "numInstances": 1,
             "skipNextTurn": false

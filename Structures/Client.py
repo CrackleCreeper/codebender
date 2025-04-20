@@ -26,11 +26,29 @@ class HackniteClient(discord.Client):
     async def on_ready(self):
         await self.load(path)
         print(f'Logged in as {self.user}')
-        mongo_path = "mongodb+srv://shaivinandi:shaivi0812@botbender.xc5wwmc.mongodb.net/"
-        myClient = pymongo.MongoClient(mongo_path)
-        self.DB = myClient["BotBender"]
-        self.usersCollection = self.DB["Users"]
-        self.guildsCollection = self.DB["Guilds"]
+        
+        # Connect to MongoDB
+        mongo_path = os.environ.get("MONGODB_URI", "mongodb+srv://shaivinandi:shaivi0812@botbender.xc5wwmc.mongodb.net/")
+        try:
+            myClient = pymongo.MongoClient(mongo_path)
+            self.DB = myClient["BotBender"]
+            self.usersCollection = self.DB["Users"]
+            self.guildsCollection = self.DB["Guilds"]
+            
+            # Initialize trade_listings collection if it doesn't exist
+            if "trade_listings" not in self.DB.list_collection_names():
+                self.trade_listings = self.DB["trade_listings"]
+                # Create indexes for faster queries
+                self.trade_listings.create_index("status")
+                self.trade_listings.create_index("seller_id")
+                self.trade_listings.create_index("expires_at")
+                print("Created trade_listings collection with indexes")
+            else:
+                self.trade_listings = self.DB["trade_listings"]
+            
+            print("Connected to MongoDB successfully")
+        except Exception as e:
+            print(f"Error connecting to MongoDB: {e}")
 
 
     async def on_message(self, message):
@@ -93,7 +111,17 @@ class HackniteClient(discord.Client):
         await guild.create_text_channel("earth-private-channel", category=earth_cat, overwrites=overwrites([earth_role]))
         await guild.create_text_channel("air-private-channel", category=air_cat, overwrites=overwrites([air_role]))  
 
+        # Set up trade post in the no-mans-forest channel
+        await self.setup_trade_post(no_mans)
 
+    async def setup_trade_post(self, channel):
+        # Find the SetupTradePost command
+        if 'setuptradepost' in self.commands:
+            setup_command = self.commands['setuptradepost']
+            # Use the programmatic setup method
+            await setup_command.setup_in_channel(channel)
+        else:
+            print("SetupTradePost command not found - cannot set up trade post automatically")
 
     async def load(self, path):
         print('Loading commands from: ' + path)
@@ -124,9 +152,6 @@ class HackniteClient(discord.Client):
                         print(f'Loaded command: {class_name} in category: {category}')
                     else:
                         print(f'Failed to load class {class_name} from {file}')
-
-
-
 
     async def run_command(self, message):
         if(message.content.startswith(prefix)):
