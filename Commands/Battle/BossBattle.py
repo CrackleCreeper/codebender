@@ -1,10 +1,8 @@
 import random
 import json
 
-with open("./Structures/Skills.json", "r") as skill_data:
-    skills = json.load(skill_data)
-with open("./Structures/Bosses.json", "r") as boss_data:
-    bosses = json.load(boss_data)
+with open("./Structures/BossSkills.json", "r") as boss_skills_file:
+    boss_skills = json.load(boss_skills_file)
 
 def chooseBasicSkill(skillList):
     basicSkillList = [x for x in skillList if x["atktype"] == "Basic"]
@@ -28,18 +26,16 @@ def makeBattleSequence(skillList):
             moves.append(skill)
     return moves
 
-def BattleSequence(skills, bosses):
-    # Get list of skill names from boss moves
-    boss_move_names = [move["name"] for move in bosses["earth"]["moves"]]
-
-    # Filter skills to only include those the boss knows
-    skillList = [skill for skill in skills["earth"] if skill["name"] in boss_move_names]
-
+def BattleSequence(boss_skills):
+    # Get the first boss's skills
+    boss_name = next(iter(boss_skills.keys()))
+    skillList = boss_skills[boss_name]["skills"]
+    
     # Create battle sequence
     battle_sequence = makeBattleSequence(skillList)
-
-    # Extract and print only the skill names from the battle sequence
+    
+    # Extract and print only the skill names
     skill_names = [move["name"] for move in battle_sequence]
     return skill_names
 
-print(json.dumps(BattleSequence(skills, bosses)))
+print(json.dumps(BattleSequence(boss_skills)))
