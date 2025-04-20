@@ -17,6 +17,7 @@ class Chess:
         self.category = "Minigames"
         self.description = "Guess the best move in a random chess position! Win 20 coins!"
         self.number_args = 0
+        self.cooldown = 30
         self.user_permissions = []
 
     def get_random_tactical_position(self, depth=12, min_cp_diff=100):

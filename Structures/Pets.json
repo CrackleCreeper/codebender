@@ -236,7 +236,7 @@
             "xp": 0,
             "rarity": "common",
             "base_hp": 35,
-            "attack": 15,
+            "attack": 20,
             "defense": 15,
             "speed": 30,
             "image": "./PICTURES/KittenMoth.png",

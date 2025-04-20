@@ -8,6 +8,7 @@ class Connect4:
         self.category = "Minigames"
         self.description = "Play connect 4 with your friend. Use !connect4 <user> to play with your friend."
         self.number_args = 1
+        self.cooldown = 30
         self.user_permissions = []
 
     def make_msg(self, rows, columns, symbols, board):

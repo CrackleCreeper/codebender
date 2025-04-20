@@ -3,6 +3,7 @@ import os
 import importlib.util
 import pymongo
 import json
+import time
 path = os.path.join(os.path.dirname(__file__), "../Commands")
 prefix = "!"
 
@@ -20,6 +21,7 @@ class HackniteClient(discord.Client):
         self.users_dict = dict()
         self.guilds_dict = dict()
         self.categories = dict()
+        self.cooldowns = dict()
 
     async def on_ready(self):
         await self.load(path)
@@ -54,6 +56,13 @@ class HackniteClient(discord.Client):
             return
         await self.run_command(message)
 
+    def is_on_cooldown(self, user_id, command_name, cooldown):
+        user_cooldowns = self.cooldowns.get(user_id, {})
+        last_used = user_cooldowns.get(command_name, 0)
+        current_time = time.time()
+        if current_time - last_used < cooldown:
+            return True, cooldown - (current_time - last_used)
+        return False, 0
 
     async def on_guild_join(self, guild):
         # === Create Visitor Roles ===
@@ -154,10 +163,19 @@ class HackniteClient(discord.Client):
             args = parts[1:]
             if name.lower() in self.commands:
                 instance = self.commands[name.lower()]
+                cooldown = getattr(instance, "cooldown", 0)
+                if cooldown > 0:
+                    on_cooldown, remaining = self.is_on_cooldown(message.author.id, name.lower(), cooldown)
+                    if on_cooldown:
+                        await message.channel.send(
+                            f"⏳ This command is on cooldown. Try again in {int(remaining)} seconds.")
+                        return
                 if self.has_permissions(message.author, instance.user_permissions):
                     expected_args = getattr(instance, 'number_args', 0)
                     if len(args) >= expected_args:
                         await instance.run(message, args, self)
+                        if cooldown > 0:
+                            self.cooldowns.setdefault(message.author.id, {})[name.lower()] = time.time()
                     else:
                         await message.channel.send('Please enter all the arguments.')
                 else:

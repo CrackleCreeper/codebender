@@ -14,6 +14,7 @@ class Fasttype:
         self.category = "Minigames"
         self.description = "A game where we can see how fast you type! You have 15 seconds to type the given sentence! Win 25 coins!"
         self.number_args = 0
+        self.cooldown = 30
         self.user_permissions = []
 
     async def fetch_sentence(self):

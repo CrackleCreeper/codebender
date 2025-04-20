@@ -9,6 +9,7 @@ class sneak:
         self.name = "sneak"
         self.category = "Map"
         self.number_args = 1
+        self.cooldown = 12 * 60 * 60
         self.description = "Command to sneak into another guild. Use !sneak <guild>. Costs 80 coins."
         self.user_permissions = []
 
