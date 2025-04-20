@@ -7,7 +7,7 @@ class battle:
     def __init__(self):
         self.name = "battle"
         self.category = "Battle"
-        self.description = "command to check currency owned"
+        self.description = "Battle another player. Use !battle <user> <bet>, default value of bet is 0"
         self.number_args = 1
         self.cooldown = 30
         self.user_permissions = []
