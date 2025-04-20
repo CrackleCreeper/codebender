@@ -3,7 +3,6 @@ import discord
 from discord.ext import commands
 from Commands.Map.travel import travel
 from datetime import datetime, timedelta
-from Structures.battlesystem import battlesystem
 
 class catch:
     def __init__(self):
@@ -78,23 +77,6 @@ class catch:
                     ),
                     color=discord.Color.red()
                 ))
-                challenger = client.usersCollection.find_one({"_id": message.author.id})
-                opponent = client.usersCollection.find_one({"_id": message.mentions[0].id})
-                ba = battlesystem(client,args,message,challenger,opponent)
-                winner = await ba.battlestart()
-                if(winner == hunter):
-                    client.usersCollection.update_one({"_id": hunter["_id"]}, {"$inc": {"money": 400}})
-                    if prey["money"] < 400:
-                        client.usersCollection.update_one({"_id": prey["_id"]}, {"$set":{"money": 0}})
-                    else:
-                        client.usersCollection.update_one({"_id": prey["_id"]}, {"$inc":{"money": -400}})
-                else:
-                    client.usersCollection.update_one({"_id": prey["_id"]}, {"$inc": {"money": 400}})
-                    if hunter["money"] < 400:
-                        client.usersCollection.update_one({"_id": hunter["_id"]}, {"$set":{"money": 0}})
-                    else:
-                        client.usersCollection.update_one({"_id": hunter["_id"]}, {"$inc":{"money": -400}})
-
         else:
             return await message.channel.send(embed=Message(
                         description="🧐 **There's no one to catch!**\nThat member isn't sneaking into your guild, or they're off lurking somewhere else. Keep your eyes peeled!",

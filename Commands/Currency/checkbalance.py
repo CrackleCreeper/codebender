@@ -3,17 +3,17 @@ import discord
 
 
 # Name the class the same as your command name preferably.
-class checkbalance:
+class CheckBalance:
 
     def __init__(self):
         # The command name. In this case this command will run when you type !test
-        self.name = "balance"
+        self.name = "checkbalance"
 
         # Category of the command. Preferably the name of the folder this file is in.
         self.category = "Currency"
 
         # What this command is used for. This description will be later used in the help command.
-        self.description = "Command to check coins owned"
+        self.description = "command to check currency owned"
 
         # The min number of arguments needed. In this case we need 1. So the command must be !test <argument>.
         self.number_args = 0
