@@ -62,8 +62,8 @@ class RenamePet:
 
         # 3) Update in MongoDB using the positional operator
         client.usersCollection.update_one(
-            { "_id": userId, "pets.petname": original_name },
-            { "$set": { "pets.$.petname": new_name } }
+            { "_id": userId, "pets.name": original_name },
+            { "$set": { "pets.$.name": new_name } }
         )
 
         # 4) Confirm
