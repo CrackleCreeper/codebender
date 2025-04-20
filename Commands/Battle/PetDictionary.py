@@ -34,7 +34,7 @@ def create_pet_embed(pet, pet_type):
     # Add moves
     moves_text = ""
     for move in pet["moves"]:
-        moves_text += f"**{move['name']}** - Power: {move['power']}\n"
+        moves_text += f"**{move['name']}**\n"
     
     embed.add_field(name="Moves", value=moves_text, inline=False)
     

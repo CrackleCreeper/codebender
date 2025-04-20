@@ -7,6 +7,7 @@ ingame = {}
 class BlackJack:
     def __init__(self):
         self.name = "bj"
+        self.category = "Minigames"
         self.description = "Play blackjack to earn coins."
         self.number_args = 1
         self.user_permissions = []
