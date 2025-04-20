@@ -138,7 +138,7 @@ class battlesystem:
             }
         }
 
-        await self.battling(pet1, pet2, self.message, self.client)
+        return await self.battling(pet1, pet2, self.message, self.client)
 
     def level_up(self, pet):
         ELEMENT_GROWTH_RATES = {
@@ -518,3 +518,5 @@ class battlesystem:
         else:
             self.client.usersCollection.update_one({"_id" : winner["_id"], "pets.name" : pet1["name"]}, {"$inc" : {"pets.$.xp" : xp}})
         os.remove(f"PICTURES/battle_preview{self.challenger['_id']}.png")
+        print(winner)
+        return winner

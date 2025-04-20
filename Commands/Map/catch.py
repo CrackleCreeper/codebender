@@ -31,7 +31,7 @@ class catch:
             ))
             return
         if hunter == prey:
-            if prey["is_sneaking"] == "true":
+            if prey["is_sneaking"] == True:
                 ban_expiry = datetime.utcnow() + timedelta(days=3)
                 client.guildsCollection.update_one({"_id" : prey["visitingGuild"]}, {"$set":{f"sneak_bans.{message.mentions[0].id}": ban_expiry}})
                 await message.channel.send(embed=Message(
@@ -61,14 +61,13 @@ class catch:
                     description="🔵 **Guild Member Detected!**\nThis person is part of your guild.",
                     color=discord.Color.blue()
                 ))
-            elif prey["is_sneaking"] == "false":
+            elif prey["is_sneaking"] == False:
                 await message.channel.send(embed=Message(
                     description="🟢 **Legal Entry**\nThis person has travelled into your guild legally.",
                     color=discord.Color.green()
                 ))
             else:
-                ban_expiry = datetime.utcnow() + timedelta(days=3)
-                client.guildsCollection.update_one({"_id": prey["visitingGuild"]},{"$set": {f"sneak_bans.{message.mentions[0].id}": ban_expiry}})
+                
                 await message.channel.send(embed=Message(
                     description=(
                         "🔴 **Fugitive Caught!**\n"
@@ -82,16 +81,20 @@ class catch:
                 opponent = client.usersCollection.find_one({"_id": message.mentions[0].id})
                 ba = battlesystem(client,args,message,challenger,opponent)
                 winner = await ba.battlestart()
-                if(winner == hunter):
+                print(winner)
+                if(winner["_id"] == hunter["_id"]):
+                    print("e")
                     client.usersCollection.update_one({"_id": hunter["_id"]}, {"$inc": {"money": 400}})
                     
                     if prey["money"] < 400:
                         client.usersCollection.update_one({"_id": prey["_id"]}, {"$set":{"money": 0}})
                     else:
                         client.usersCollection.update_one({"_id": prey["_id"]}, {"$inc":{"money": -400}})
-                    if(prey["money"] < 400):
-                        client.usersCollection.update_one({"_id": message.mentions[0].id}, {"$set":{"money":400}})
-                    return await travel_cmd.run(message, [prey["homeGuild"]], client)
+                    client.usersCollection.update_one({"_id": prey["_id"]}, {"$set":{"visitingGuild": prey["homeGuild"], "is_sneaking" : False}})
+                    ban_expiry = datetime.utcnow() + timedelta(days=3)
+                    client.guildsCollection.update_one({"_id": prey["visitingGuild"]},{"$set": {f"sneak_bans.{message.mentions[0].id}": ban_expiry}})
+                    member = message.guild.get_member(prey["_id"])
+                    await member.remove_roles(discord.utils.get(message.guild.roles, name = prey["visitingGuild"]))
                 else:
                     client.usersCollection.update_one({"_id": prey["_id"]}, {"$inc": {"money": 400}})
                     if hunter["money"] < 400:

@@ -66,7 +66,7 @@ class sneak:
         if target_guild == home_guild:
             client.usersCollection.update_one(
                 {"_id": person},
-                {"$set": {"money": coins - 80, "visitingGuild": target_guild, "is_sneaking": "false"}}
+                {"$set": {"money": coins - 80, "visitingGuild": target_guild, "is_sneaking": False}}
             )
             return await message.channel.send(embed=Message(
                 description="🏠 **You quietly returned to your home guild.**",
@@ -79,7 +79,7 @@ class sneak:
 
         client.usersCollection.update_one(
             {"_id": person},
-            {"$set": {"money": coins - 80, "visitingGuild": target_guild, "is_sneaking": "true"}}
+            {"$set": {"money": coins - 80, "visitingGuild": target_guild, "is_sneaking": True}}
         )
 
         await message.channel.send(embed=Message(
