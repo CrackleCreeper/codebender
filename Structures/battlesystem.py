@@ -275,7 +275,7 @@ class battlesystem:
             # Skip moves if they are throttled
             if move.get("atktype") == "Burst" and throttle_burst > 0:
                 continue
-            if move.get("skilltype") == "Heal" and throttle_stun > 0:
+            if move.get("skilltype") == "Stun" and throttle_stun > 0:
                 continue
             if move.get("skilltype") == "Dodge" and throttle_dodge > 0:
                 continue
