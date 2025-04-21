@@ -63,7 +63,7 @@
             },
             {
                 "name": "Verdant Wrath",
-                "skilltype": "Stun",
+                "skilltype": "Attack",
                 "atktype": "Burst",
                 "description": "The Hei Bai makes a bamboo cage for the opponent, and then crushes them into the ground to suffocate them.",
                 "power": 25,

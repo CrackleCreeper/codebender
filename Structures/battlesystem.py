@@ -381,7 +381,6 @@ class battlesystem:
             self.logger.log_buff(defender_pet["name"], "defreduction", -move["defreduction"])
 
     def draw_hp_bar(self, draw, x, y, width, height, current_hp, max_hp):
-        """Draws an HP bar with a black border that shows empty when HP is negative."""
         # Draw the border
         bar_outline = (x, y, x + width, y + height)
         draw.rectangle(bar_outline, outline="black", width=2)
@@ -453,7 +452,7 @@ class battlesystem:
             status_y += 15
         
         if self.battlestate["throttle"]["burst"][challenger_id] > 0:
-            draw.text((25, status_y), f"BURST CD ({self.battlestate['throttle']['burst'][challenger_id]})", font=font, fill="blue")
+            draw.text((25, status_y), f"BURST CD ({self.battlestate['throttle']['burst'][challenger_id] - 1})", font=font, fill="blue")
             status_y += 15
             
         # Draw status indicators for opponent pet
@@ -463,27 +462,25 @@ class battlesystem:
             status_y += 15
             
         if self.battlestate["throttle"]["burst"][opponent_id] > 0:
-            draw.text((275, status_y), f"BURST CD ({self.battlestate['throttle']['burst'][opponent_id]})", font=font, fill="blue")
+            draw.text((275, status_y), f"BURST CD ({self.battlestate['throttle']['burst'][opponent_id] - 1})", font=font, fill="blue")
 
         canvas.save(self.output_path)
 
     def process_ongoing_effects(self, defender):
-        total_damage = 0
         remaining = []
         for effect in self.battlestate["ongoing_effects"][defender]:
             if effect["numInstances"] > 1:
                 remaining.append(effect)
+                self.battlestate["ongoing_effects"][defender]["numInstances"] -= 1
 
         for effect in remaining:
-            damage = effect["power"]
-            total_damage += damage
+            damage = max(damage,effect["power"])
             
-            # Log ongoing damage effects
-            if damage > 0:
-                defender_pet = self.challenger_pet if defender == self.challenger["_id"] else self.opponent_pet
-                self.logger.add_entry(f"🔄 **{defender_pet['name']}** takes {damage} ongoing damage from status effects!")
+        if damage > 0:
+            defender_pet = self.challenger_pet if defender == self.challenger["_id"] else self.opponent_pet
+            self.logger.add_entry(f"🔄 **{defender_pet['name']}** takes {damage} ongoing damage from status effects!")
 
-        return total_damage
+        return damage
 
     def calculate_damage(self, attacker, defender, move, chal, defen):
         self.apply_move_effects(move, chal, defen)
@@ -495,11 +492,11 @@ class battlesystem:
 
         defender_defense = max(1, defender_defense)
 
-        base_damage = (attacker_attack * move["power"]) / defender_defense
+        base_damage = (attacker_attack * move["power"]) 
 
         effect_damage = self.process_ongoing_effects(defen)
 
-        atk = max(0, base_damage + effect_damage)
+        atk = max(0, (base_damage + effect_damage) / defender_defense)
 
         # Log damage calculation detail
         
@@ -649,11 +646,11 @@ class battlesystem:
             if (move_challenger["skilltype"] == "Stun"):
                 stun_duration = move_challenger["numInstances"] + 1
                 self.battlestate["stunned"][opponent_id] = stun_duration
-                self.logger.log_stun(pet2["name"], stun_duration)
+                self.logger.log_stun(pet2["name"], stun_duration - 1)
             if (move_opponent["skilltype"] == "Stun"):
                 stun_duration = move_opponent["numInstances"] + 1
                 self.battlestate["stunned"][challenger_id] = stun_duration
-                self.logger.log_stun(pet1["name"], stun_duration)
+                self.logger.log_stun(pet1["name"], stun_duration -1)
                 
             # Apply damage based on priority
             if(priority == pet1):
