@@ -338,10 +338,8 @@ class Buy:
 
             try:
                 move_to_replace_msg = await client.wait_for('message', timeout=60.0, check=check)
-
                 move_to_replace = move_to_replace_msg.content.strip()
 
-                
 
                 if user_pet is None:
                     return await message.channel.send(embed=Message(description=f"No pet named {pet_name} found."))
@@ -349,19 +347,21 @@ class Buy:
                 if not user_pet.get('moves'):
                     return await message.channel.send(embed=Message(description=f"{pet_name} has no moves to replace."))
 
-                if not any(m['name'].lower() == move_to_replace.lower() for m in user_pet['moves']):
+                move_to_replace = ' '.join(word.capitalize() for word in move_to_replace.split())
+
+                if not any(m['name'] == move_to_replace for m in user_pet['moves']):
                     return await message.channel.send(
                         embed=Message(description=f"{move_to_replace} not found on {user_pet['name']}."))
 
-                # Remove the old move
+                # Remove the old move (using the properly formatted name)
                 client.usersCollection.update_one(
                     {"_id": message.author.id, "pets.name": user_pet['name']},
                     {
-                        "$pull": {"pets.$.moves": {"name": move_to_replace}}  # Remove the old move
+                        "$pull": {"pets.$.moves": {"name": move_to_replace}}  # Match exact formatted name
                     }
                 )
 
-                # Add the new skill to the pet and deduct money
+                # Add the new skill to the pet
                 client.usersCollection.update_one(
                     {"_id": message.author.id, "pets.name": user_pet['name']},
                     {
