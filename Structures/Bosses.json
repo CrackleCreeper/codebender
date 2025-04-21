@@ -11,23 +11,86 @@
             "moves": [
                 {
                     "name": "Six-Claw Assault",
-                    "type": "Earth"
+                    "element": "Earth",
+                    "skilltype": "Attack",
+                    "atktype": "Basic",
+                    "description": "Hei Bai lashes out with its six limbs, dealing significant physical damage.",
+                    "power": 18,
+                    "defreduction": 0,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": false, 
+                    "numInstances": 5,
+                    "skipNextTurn": false
                 },
                 {
                     "name": "Frenzied Charge",
-                    "type": "Earth"
+                    "element": "Earth",
+                    "skilltype": "Attack",
+                    "atktype": "Basic",
+                    "description": "The Hei Bai attacks all players with in rapid frenzy, reducing their defense and increasing its own attack for three counts",
+                    "power": 15,
+                    "defreduction": 5,
+                    "defbuff": 0,
+                    "atkbuff": 5,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": false,
+                    "numInstances": 3,
+                    "skipNextTurn": false
                 },
                 {
                     "name": "Soothing Touch",
-                    "type": "Earth"
+                    "element": "Earth",
+                    "skilltype": "Heal",
+                    "atktype": "Basic",
+                    "description": "The Hei Bai heals itself by draining the energy from the opponent, reducing their attack power.",
+                    "power": 0,
+                    "defreduction": 0,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 5,
+                    "heal": 15,
+                    "dodge": false,
+                    "numInstances": 1,
+                    "skipNextTurn": false
+
                 },
                 {
                     "name": "Unbreakable Forest",
-                    "type": "Earth"
+                    "element": "Earth",
+                    "skilltype": "Attack",
+                    "atktype": "Burst",
+                    "description": "The Hei Bai puts up a defensive shield made of the forest wood, and uses the power of the earth to make 6 consecultive attacks, dealing damage to the opponent.",
+                    "power": 15,
+                    "defreduction": 5,
+                    "defbuff": 8,
+                    "atkbuff": 0,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": false,
+                    "numInstances": 6,
+                    "skipNextTurn": false
+
                 },
                 {
                     "name": "Verdant Wrath",
-                    "type": "Earth"
+                    "element": "Earth",
+                    "skilltype": "Stun",
+                    "atktype": "Burst",
+                    "description": "The Hei Bai makes a bamboo cage for the opponent, and then crushes them into the ground to suffocate them.",
+                    "power": 25,
+                    "defreduction": 0,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": false,
+                    "numInstances": 1,
+                    "skipNextTurn": true
+
                 }
             ]
     }
