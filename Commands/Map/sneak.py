@@ -9,7 +9,7 @@ class sneak:
         self.name = "sneak"
         self.category = "Map"
         self.number_args = 1
-        self.cooldown = 12 * 60 * 60
+        self.cooldown = 0
         self.description = "Command to sneak into another guild. Use !sneak <guild>. Costs 80 coins."
         self.user_permissions = []
 
@@ -64,6 +64,7 @@ class sneak:
 
         # Travel back home
         if target_guild == home_guild:
+            self.cooldown = 12 * 60 * 60
             client.usersCollection.update_one(
                 {"_id": person},
                 {"$set": {"money": coins - 80, "visitingGuild": target_guild, "is_sneaking": False}}
@@ -76,7 +77,7 @@ class sneak:
         # Sneaking into another guild
         if new_guild_role and member:
             await member.add_roles(new_guild_role)
-
+        self.cooldown = 12 * 60 * 60
         client.usersCollection.update_one(
             {"_id": person},
             {"$set": {"money": coins - 80, "visitingGuild": target_guild, "is_sneaking": True}}
