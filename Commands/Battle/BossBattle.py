@@ -15,7 +15,6 @@ class BattleLogger:
     def add_entry(self, entry):
         """Add a general entry to the battle log"""
         self.log_entries.append(entry)
-        print(entry)  # Also print to console for debugging
     
     def log_attack(self, attacker_name, defender_name, move_name, damage):
         """Log an attack"""
@@ -125,12 +124,11 @@ class BossBattle:
         # Define the callback factory
         def make_callback(index, pet_name):
             async def callback(interaction):
-                print(f"Button {index} clicked by {interaction.user.id}")
                 if interaction.user.id != self.challenger["_id"]:
                     return await interaction.response.send_message("⛔ Not your pet to select.", ephemeral=True)
                 if self.challenger_pet is None:
                     self.challenger_pet = self.pets[index - 1]
-                    # Fixed bug: Need to properly remove the selected pet from the list
+
                     self.pets = self.pets[:index - 1] + self.pets[index:]
                     await interaction.response.send_message(f"✅ You selected pet #{index}: **{pet_name}**", ephemeral=True)
                     challenger_event.set()
@@ -163,7 +161,7 @@ class BossBattle:
         throttle_burst = self.battlestate["throttle"]["burst"].get(user_id, 0)
         throttle_dodge = self.battlestate["throttle"]["dodge"].get(user_id, 0)
 
-        # Log throttled skills
+
         if throttle_burst > 0:
             self.logger.log_throttled_skill(pet_name, "Burst", throttle_burst)
         if throttle_dodge > 0:
@@ -172,7 +170,7 @@ class BossBattle:
         available_moves = []
 
         for index, move in enumerate(pet["moves"], start=1):
-            # Skip moves if they are throttled
+
             if move.get("atktype") == "Burst" and throttle_burst > 0:
                 continue
             if move.get("skilltype") == "Dodge" and throttle_dodge > 0:
@@ -217,7 +215,7 @@ class BossBattle:
         attacker_pet = self.challenger_pet if attacker_id == self.challenger["_id"] else self.boss
         defender_pet = self.boss if attacker_id == self.challenger["_id"] else self.challenger_pet
         
-        # Fixed bug: Properly handle buffs and debuffs
+
         if "atkbuff" in move and move["atkbuff"] > 0:
             if self.battlestate["buffs"][attacker_id]["attack"]["nums"] > 1:
                 atk = max(move["atkbuff"], self.battlestate["buffs"][attacker_id]["attack"]["value"])
@@ -233,7 +231,7 @@ class BossBattle:
             self.logger.log_buff(attacker_pet["name"], "attack", move["atkbuff"])
 
         if "atkreduction" in move and move["atkreduction"] > 0:
-            # Fixed bug: Should be updating defender's atkreduction, not attacker's
+
             if self.battlestate["buffs"][defender_id]["atkreduction"]["nums"] > 1:
                 atk = max(move["atkreduction"], self.battlestate["buffs"][defender_id]["atkreduction"]["value"])
                 self.battlestate["buffs"][defender_id]["atkreduction"]["value"] = atk
@@ -262,7 +260,7 @@ class BossBattle:
             self.logger.log_buff(attacker_pet["name"], "defense", move["defbuff"])
             
         if "defreduction" in move and move["defreduction"] > 0:
-            # Fixed bug: Should be updating defender's defreduction, not attacker's
+
             if self.battlestate["buffs"][defender_id]["defreduction"]["nums"] > 1:
                 defe = max(move["defreduction"], self.battlestate["buffs"][defender_id]["defreduction"]["value"])
                 self.battlestate["buffs"][defender_id]["defreduction"]["value"] = defe
@@ -277,7 +275,7 @@ class BossBattle:
             self.logger.log_buff(defender_pet["name"], "defense", -move["defreduction"])
 
     def draw_hp_bar(self, draw, x, y, width, height, current_hp, max_hp):
-        # Draw the border
+
         bar_outline = (x, y, x + width, y + height)
         draw.rectangle(bar_outline, outline="black", width=2)
         
@@ -355,7 +353,6 @@ class BossBattle:
             print(f"Error generating battle image: {e}")
 
     def process_ongoing_effects(self, defender):
-        # Fixed bug: Properly handle ongoing effects
         damage = 0
         remaining = []
         
@@ -366,7 +363,6 @@ class BossBattle:
                 if effect.get("power", 0) > 0:
                     damage = max(damage, effect["power"])
         
-        # Update the ongoing effects list
         self.battlestate["ongoing_effects"][defender] = remaining
             
         if damage > 0:
@@ -376,23 +372,17 @@ class BossBattle:
         return damage
 
     def calculate_damage(self, attacker, defender, move, chal, defen):
-        # Apply buffs and debuffs first
         self.apply_move_effects(move, chal, defen)
 
-        # Calculate effective attack and defense values
         attacker_attack = attacker["attack"] + self.battlestate["buffs"][chal]["attack"]["value"] - self.battlestate["buffs"][chal]["atkreduction"]["value"]
         defender_defense = defender["defense"] + self.battlestate["buffs"][defen]["defense"]["value"] - self.battlestate["buffs"][defen]["defreduction"]["value"]
 
-        # Ensure defense doesn't go below 1
         defender_defense = max(1, defender_defense)
 
-        # Calculate base damage
         base_damage = (attacker_attack * move["power"]) 
 
-        # Process ongoing effects
         effect_damage = self.process_ongoing_effects(defen)
 
-        # Calculate final damage
         final_damage = max(0, (base_damage + effect_damage) / defender_defense)
         
         return final_damage
@@ -404,40 +394,31 @@ class BossBattle:
         challenger_id = self.challenger["_id"]
         opponent_id = "boss"
         
-        # Initialize battle state
         self.battlestate["hp"][challenger_id] = pet1["base_hp"]
         self.battlestate["hp"][opponent_id] = pet2["base_hp"]
         
-        # Determine who goes first based on speed
         priority = pet1 if pet1["speed"] > pet2["speed"] else pet2
         turn = 1
         
-        # Generate initial battle image
         self.generate_battle_image(pet1, pet2)
         
-        # Log battle start with priority information
         self.logger.add_entry(f"🏁 Battle starts! **{priority['name']}** will go first due to higher speed ({priority['speed']})!")
         
-        # Send initial battle state
         detail_embed = discord.Embed(title=f"Turn {turn} Begins", description="Waiting for move selection...", color=discord.Color.green())
         file = discord.File(self.output_path, filename="battle.png")
         image_embed = discord.Embed(title=f"⚔ Battle: {pet1['name']} vs {pet2['name']}")
         image_embed.set_image(url="attachment://battle.png")
         await message.channel.send(embeds=[image_embed, detail_embed], file=file)
         
-        # Initialize move variables
         move_challenger = None
         move_opponent = None
         
-        # Main battle loop
         while self.battlestate["hp"][challenger_id] > 0 and self.battlestate["hp"][opponent_id] > 0:
             self.logger.add_entry(f"\n📢 **Turn {turn} begins!**")
             
-            # Reset moves
             move_challenger = {"name": "No Available Move", "power": 0, "numInstances": 0, "atktype": "Basic", "skilltype": "Basic"}
             move_opponent = {"name": "No Available Move", "power": 0, "numInstances": 0, "atktype": "Basic", "skilltype": "Basic"}
             
-            # Handle throttle cooldowns
             throttle_types = ["burst", "dodge"]
             for throttle_type in throttle_types:
                 if self.battlestate["throttle"][throttle_type].get(opponent_id, 0) > 0:
@@ -452,17 +433,14 @@ class BossBattle:
             
             await asyncio.sleep(1)
             
-            # Get moves from players
             move_challenger = await self.prompt_move_selection(challenger_id, pet1, message)
             if move_challenger == self.winner:
                 return self.winner
             
-            # Get boss move
             move_opponent = self.bossMove()
             if move_opponent == self.winner:
                 return self.winner
             
-            # Handle throttled skills
             for throttle_type in throttle_types:
                 if throttle_type == "burst":
                     if move_opponent.get("atktype") == "Burst":
@@ -479,7 +457,6 @@ class BossBattle:
                         self.battlestate["throttle"][throttle_type][opponent_id] = 3
                         self.logger.log_throttled_skill(pet2["name"], throttle_type.capitalize(), 3)
 
-            # Handle healing
             if move_challenger.get("skilltype") == "Heal":
                 old_hp = self.battlestate["hp"][challenger_id]
                 self.battlestate["hp"][challenger_id] = min(pet1["base_hp"], move_challenger.get("heal", 0) + self.battlestate["hp"][challenger_id])
@@ -488,19 +465,15 @@ class BossBattle:
                 
             if move_opponent.get("skilltype") == "Heal":
                 old_hp = self.battlestate["hp"][opponent_id]
-                # Fixed bug: Should be using pet2 (boss) base_hp, not opponent_pet
                 self.battlestate["hp"][opponent_id] = min(pet2["base_hp"], move_opponent.get("heal", 0) + self.battlestate["hp"][opponent_id])
                 heal_amount = self.battlestate["hp"][opponent_id] - old_hp
                 self.logger.log_heal(pet2["name"], heal_amount)
                 
-            # Calculate damage
             dmg1 = self.calculate_damage(pet1, pet2, move_challenger, challenger_id, opponent_id)
             dmg2 = self.calculate_damage(pet2, pet1, move_opponent, opponent_id, challenger_id)
 
-            # Handle stun effects
             if move_challenger.get("skilltype") == "Stun":
                 stun_duration = move_challenger.get("numInstances", 0) + 1
-                # Add stunned state to battlestate if it doesn't exist
                 if "stunned" not in self.battlestate:
                     self.battlestate["stunned"] = {opponent_id: 0, challenger_id: 0}
                 self.battlestate["stunned"][opponent_id] = stun_duration
@@ -508,13 +481,11 @@ class BossBattle:
                 
             if move_opponent.get("skilltype") == "Stun":
                 stun_duration = move_opponent.get("numInstances", 0) + 1
-                # Add stunned state to battlestate if it doesn't exist
                 if "stunned" not in self.battlestate:
                     self.battlestate["stunned"] = {opponent_id: 0, challenger_id: 0}
                 self.battlestate["stunned"][challenger_id] = stun_duration
                 self.logger.log_stun(pet1["name"], stun_duration - 1)
                 
-            # Apply damage based on priority
             if priority == pet1:
                 if move_opponent.get("skilltype") != "Dodge":
                     self.battlestate["hp"][opponent_id] -= dmg1
@@ -546,19 +517,16 @@ class BossBattle:
                 else:
                     self.logger.log_dodge(pet2["name"])
                     
-            # Check for battle end conditions
             if self.battlestate["hp"][opponent_id] <= 0:
                 return await self.battle_end(pet1, pet2, self.challenger)
             if self.battlestate["hp"][challenger_id] <= 0:
                 return await self.battle_end(pet2, pet1, self.boss)
                 
-            # Update battle display
             self.generate_battle_image(pet1, pet2)
             file = discord.File(self.output_path, filename="battle.png")
             image_embed = discord.Embed(title=f"⚔ Battle: {pet1['name']} vs {pet2['name']}")
             image_embed.set_image(url="attachment://battle.png")
             
-            # Get recent battle log entries for the status text
             recent_log = self.logger.get_log(5) 
             log_text = "\n".join(recent_log)
             
@@ -588,13 +556,11 @@ class BossBattle:
         image_embed = discord.Embed(title=f"⚔ Battle: {self.challenger_pet['name']} vs {self.boss['name']}")
         image_embed.set_image(url="attachment://battle.png")
         
-        # Create a battle summary embed
         battle_summary = discord.Embed(title="Battle Summary", color=discord.Color.gold())
         battle_summary.description = "\n".join(self.logger.get_log(10))  # Show the last 10 log entries
         
         await self.message.channel.send(file=file, embeds=[image_embed, battle_summary])
     
-        # Clean up temporary files
         try:
             os.remove(self.output_path)
         except:
@@ -608,7 +574,6 @@ class BossBattle:
         self.challenger = client.usersCollection.find_one({"_id": person})
         self.output_path = f"PICTURES/battle_preview{self.challenger['_id']}.png"
         
-        # Get the boss for the challenger's current guild
         visiting_guild = self.challenger.get("visitingGuild")
         if not visiting_guild or visiting_guild not in bosses:
             return await message.channel.send(embed=discord.Embed(description="Coming Soon!"))
@@ -618,10 +583,9 @@ class BossBattle:
         self.challenger_pet = None
         self.pets = self.challenger.get("pets", [])
 
-        # Initialize battle state
         self.battlestate = {
             "hp": {
-                self.challenger["_id"]: 0,  # Will be set when pet is selected
+                self.challenger["_id"]: 0,  
                 "boss": self.boss["base_hp"]
             },
             "buffs": {
@@ -661,7 +625,6 @@ class BossBattle:
         self.winner = None
         self.logger.add_entry(f"🔥 Boss Battle against {self.boss['name']} has begun!")
         
-        # The challenger gets 3 attempts with different pets
         for attempt in range(1, 4):
             self.logger.add_entry(f"🏆 Attempt {attempt}/3")
             await self.prompt_pet_selection()
@@ -670,7 +633,6 @@ class BossBattle:
                 self.logger.add_entry("❌ No pet selected. Battle cancelled.")
                 return
                 
-            # Reset battle state for this attempt
             self.battlestate["hp"][self.challenger["_id"]] = self.challenger_pet["base_hp"]
             self.battlestate["buffs"][self.challenger["_id"]] = {
                 "attack": {"value": 0, "nums": 0},
@@ -683,7 +645,6 @@ class BossBattle:
             self.battlestate["throttle"]["dodge"][self.challenger["_id"]] = 0
             self.battlestate["stunned"][self.challenger["_id"]] = 0
             
-            # Reset boss state for this attempt
             self.battlestate["buffs"]["boss"] = {
                 "attack": {"value": 0, "nums": 0},
                 "defense": {"value": 0, "nums": 0},
@@ -692,21 +653,16 @@ class BossBattle:
             }
 
             
-            # Start the battle
             await self.battling(message)
             
-            # Check if challenger won
             if self.winner == self.challenger:
                 self.logger.add_entry(f"🎉 Congratulations! You defeated {self.boss['name']} on attempt {attempt}!")
                 return
                 
-            # Reset for next attempt
             self.challenger_pet = None
             
-        # If we get here, the challenger lost all 3 attempts
         self.logger.add_entry(f"💔 You've used all 3 attempts and failed to defeat {self.boss['name']}. Better luck next time!")
         
-        # Clean up temporary files
         try:
             os.remove(self.output_path)
         except:
