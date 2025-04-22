@@ -157,13 +157,10 @@ class BossBattle:
         event = asyncio.Event()
 
         pet_name = pet["name"]
-
-        throttle_burst = self.battlestate["throttle"]["burst"].get(user_id, 0)
+        
         throttle_dodge = self.battlestate["throttle"]["dodge"].get(user_id, 0)
 
 
-        if throttle_burst > 0:
-            self.logger.log_throttled_skill(pet_name, "Burst", throttle_burst)
         if throttle_dodge > 0:
             self.logger.log_throttled_skill(pet_name, "Dodge", throttle_dodge)
 
@@ -171,8 +168,6 @@ class BossBattle:
 
         for index, move in enumerate(pet["moves"], start=1):
 
-            if move.get("atktype") == "Burst" and throttle_burst > 0:
-                continue
             if move.get("skilltype") == "Dodge" and throttle_dodge > 0:
                 continue
                 
@@ -381,9 +376,10 @@ class BossBattle:
 
         base_damage = (attacker_attack * move["power"]) 
 
-        effect_damage = self.process_ongoing_effects(defen)
-
-        final_damage = max(0, (base_damage + effect_damage) / defender_defense)
+        effect_damage = self.process_ongoing_effects(defen) * attacker["attack"]
+        print(base_damage)
+        print(effect_damage)
+        final_damage = max(0, (base_damage + effect_damage)  / defender_defense)
         
         return final_damage
 
@@ -395,7 +391,7 @@ class BossBattle:
         opponent_id = "boss"
         
         self.battlestate["hp"][challenger_id] = pet1["base_hp"]
-        self.battlestate["hp"][opponent_id] = pet2["base_hp"]
+
         
         priority = pet1 if pet1["speed"] > pet2["speed"] else pet2
         turn = 1
@@ -426,17 +422,15 @@ class BossBattle:
                     if self.battlestate["throttle"][throttle_type][opponent_id] == 0:
                         self.logger.add_entry(f"✅ **{pet2['name']}**'s {throttle_type.capitalize()} skills are now available!")
                 
-                if self.battlestate["throttle"][throttle_type].get(challenger_id, 0) > 0:
-                    self.battlestate["throttle"][throttle_type][challenger_id] -= 1
-                    if self.battlestate["throttle"][throttle_type][challenger_id] == 0:
-                        self.logger.add_entry(f"✅ **{pet1['name']}**'s {throttle_type.capitalize()} skills are now available!")
-            
+
+            if  self.battlestate["stunned"][challenger_id] > 0:
+                self.battlestate["stunned"][challenger_id] -= 1
             await asyncio.sleep(1)
-            
-            move_challenger = await self.prompt_move_selection(challenger_id, pet1, message)
-            if move_challenger == self.winner:
-                return self.winner
-            
+            if  self.battlestate["stunned"][challenger_id] <= 0:
+                move_challenger = await self.prompt_move_selection(challenger_id, pet1, message)
+                if move_challenger == self.winner:
+                    return self.winner
+        
             move_opponent = self.bossMove()
             if move_opponent == self.winner:
                 return self.winner
@@ -452,7 +446,6 @@ class BossBattle:
                 else:
                     if move_challenger.get("skilltype") == throttle_type.capitalize():
                         self.battlestate["throttle"][throttle_type][challenger_id] = 3
-                        self.logger.log_throttled_skill(pet1["name"], throttle_type.capitalize(), 3)
                     if move_opponent.get("skilltype") == throttle_type.capitalize():
                         self.battlestate["throttle"][throttle_type][opponent_id] = 3
                         self.logger.log_throttled_skill(pet2["name"], throttle_type.capitalize(), 3)
@@ -486,6 +479,9 @@ class BossBattle:
                 self.battlestate["stunned"][challenger_id] = stun_duration
                 self.logger.log_stun(pet1["name"], stun_duration - 1)
                 
+            self.battlestate["ongoing_effects"][challenger_id].append(move_opponent)
+            self.battlestate["ongoing_effects"][opponent_id].append(move_challenger)
+
             if priority == pet1:
                 if move_opponent.get("skilltype") != "Dodge":
                     self.battlestate["hp"][opponent_id] -= dmg1
@@ -657,7 +653,7 @@ class BossBattle:
             
             if self.winner == self.challenger:
                 self.logger.add_entry(f"🎉 Congratulations! You defeated {self.boss['name']} on attempt {attempt}!")
-                return
+                return 
                 
             self.challenger_pet = None
             
