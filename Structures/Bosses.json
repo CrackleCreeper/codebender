@@ -85,5 +85,181 @@
                     "skipNextTurn": true
                 }
             ]
+    },
+    "Air": {
+            "name": "Wolf Spirit",
+            "type": "Air",
+            "base_hp": 250,
+            "attack": 80,
+            "defense": 100,
+            "speed": 20,
+            "image": "./PICTURES/WolfSpirit.png",
+            "description": "The wolf spirit is a ferocious beast and guardian who acts as a servant to the Mother of Faces, choosing the paths for her seasonal travels through Forgetful Valley.",
+            "moves": [
+                {
+                    "name": "Lupine Slash",
+                    "skilltype": "Attack",
+                    "atktype": "Basic",
+                    "description": "The Wolf Spirit slashes the opponent with its sharp claws, wounding the target greatly.",
+                    "power": 45,
+                    "defreduction": 0,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": false, 
+                    "numInstances": 0,
+                    "skipNextTurn": false
+                },
+                {
+                    "name": "Howl of The Valley",
+                    "skilltype": "Dodge",
+                    "atktype": "Basic",
+                    "description": "The Wolf Spirit howls into the valley, calling upon the Mother of Faces to temporarily erase the memory of the opponent. The Wolf receives no damage from the next two attacks.",
+                    "power": 35,
+                    "defreduction": 0,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": true,
+                    "numInstances": 2,
+                    "skipNextTurn": false
+                },
+                {
+                    "name": "Fire-Drinking Breath",
+                    "skilltype": "Heal",
+                    "atktype": "Basic",
+                    "description": "A Fire-type heals the Wolf Spirit by draining the energy from the opponent, reducing their attack power.",
+                    "power": 0,
+                    "defreduction": 0,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 10,
+                    "heal": 30,
+                    "dodge": false,
+                    "numInstances": 1,
+                    "skipNextTurn": false
+                },
+                {
+                    "name": "Spirit-Moth Hurricane",
+                    "skilltype": "Attack",
+                    "atktype": "Burst",
+                    "description": "The Wolf Spirit breathes out a hurricane made of a thousand spirit moths, stunning the opponent and dealing 5 counts of damage and defense reduction.",
+                    "power": 15,
+                    "defreduction": 10,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": false,
+                    "numInstances": 5,
+                    "skipNextTurn": false
+                },
+                {
+                    "name": "The Mother's Calling",
+                    "skilltype": "Stun",
+                    "atktype": "Burst",
+                    "description": "The Wolf Spirit calls upon its creator, the Mother of Faces, to protect it. The Mother of Faces then uses a sacred fire to burn the opponent, and heals the Wolf in equal measure.",
+                    "power": 30,
+                    "defreduction": 0,
+                    "defbuff": 30,
+                    "atkbuff": 0,
+                    "atkreduction": 0,
+                    "heal": 30,
+                    "dodge": false,
+                    "numInstances": 1,
+                    "skipNextTurn": true
+                }
+            ]
+        
+    },
+    "Water": {
+            "name": "Koh The Face Stealer",
+            "type": "Water",
+            "base_hp": 250,
+            "attack": 80,
+            "defense": 100,
+            "speed": 20,
+            "image": "./PICTURES/Koh.png",
+            "description": "Koh the Face Stealer is one of the most ancient and knowledgeable spirits in all of the Spirit World. He is a malevolent entity with the body of an enormous centipede-like creature and resides under an ancient tree in the Spirit World.",
+            "moves": [
+                {
+                    "name": "Emotion Drain",
+                    "skilltype": "Attack",
+                    "atktype": "Basic",
+                    "description": "Koh inflicts an emotion-based debuff on all enemies. Fear (opponent HP below 50%)- 30% defense reduction. Anger (opponent attack above 50) - 30% attack reduction. Grief (opponent defense above 40) - stun for 1 turn.",
+                    "power": 45,
+                    "defreduction": 30,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 30,
+                    "heal": 0,
+                    "dodge": false, 
+                    "numInstances": 0,
+                    "skipNextTurn": true
+                },
+                {
+                    "name": "Web of Deceit",
+                    "skilltype": "Stun",
+                    "atktype": "Basic",
+                    "description": "Koh casts an illusion over the battlefield for 2 turns. This blinds the attacker, and stuns the opponent, and reduces their defense.",
+                    "power": 20,
+                    "defreduction": 10,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": false,
+                    "numInstances": 2,
+                    "skipNextTurn": true
+                },
+                {
+                    "name": "Face of Deception",
+                    "skilltype": "Attack",
+                    "atktype": "Basic",
+                    "description": "Increases opponent attack by 20%, but at the same time decreases their defense by 60%.",
+                    "power": 0,
+                    "defreduction": 60,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": -20,
+                    "heal": 30,
+                    "dodge": false,
+                    "numInstances": 1,
+                    "skipNextTurn": false
+                },
+                {
+                    "name": "Steal Face",
+                    "skilltype": "Attack",
+                    "atktype": "Burst",
+                    "description": "Koh mimics the previous attack made by the opponent at 150% of its power.",
+                    "power": 0,
+                    "defreduction": 0,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": false,
+                    "numInstances": 1,
+                    "skipNextTurn": false
+                },
+                {
+                    "name": "Spirit Step",
+                    "skilltype": "Attack",
+                    "atktype": "Burst",
+                    "description": "Koh uses its power to make an explosion and step partially into the spirit world to gain a number of buffs. ",
+                    "power": 30,
+                    "defreduction": 0,
+                    "defbuff": 30,
+                    "atkbuff": 0,
+                    "atkreduction": 30,
+                    "heal": 0,
+                    "dodge": false,
+                    "numInstances": 3,
+                    "skipNextTurn": false
+                }
+            ]
+        
     }
 }
