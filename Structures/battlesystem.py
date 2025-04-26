@@ -467,14 +467,17 @@ class battlesystem:
         canvas.save(self.output_path)
 
     def process_ongoing_effects(self, defender):
+        damage = 0
         remaining = []
+        
         for effect in self.battlestate["ongoing_effects"][defender]:
-            if effect["numInstances"] > 1:
+            if effect.get("numInstances", 0) > 1:
+                effect["numInstances"] -= 1
                 remaining.append(effect)
-                self.battlestate["ongoing_effects"][defender]["numInstances"] -= 1
-
-        for effect in remaining:
-            damage = max(damage,effect["power"])
+                if effect.get("power", 0) > 0:
+                    damage = max(damage, effect["power"])
+        
+        self.battlestate["ongoing_effects"][defender] = remaining
             
         if damage > 0:
             defender_pet = self.challenger_pet if defender == self.challenger["_id"] else self.opponent_pet
@@ -575,7 +578,6 @@ class battlesystem:
                 else:
                     self.logger.log_skipped_turn(pet2["name"])
             
-            # Reset moves
             move_challenger = {"name": "No Available Move", "power": 0, "numInstances": 0, "atktype": "Basic", "skilltype": "Basic"}
             move_opponent = {"name": "No Available Move", "power": 0, "numInstances": 0, "atktype": "Basic", "skilltype": "Basic"}
             
@@ -594,7 +596,6 @@ class battlesystem:
             
             await asyncio.sleep(1)
             
-            # Get moves from players
             if self.battlestate["stunned"][challenger_id] == 0:
                 move_challenger = await self.prompt_move_selection(self.challenger["_id"], pet1, message)
                 if(move_challenger == self.winner):
