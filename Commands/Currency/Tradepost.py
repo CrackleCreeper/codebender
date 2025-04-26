@@ -42,7 +42,6 @@ class TradeListingModal(Modal):
         try:
             price = int(self.price_input.value)
             duration = int(self.duration_input.value)
-            
             if price <= 0:
                 return await interaction.response.send_message("Price must be greater than 0.", ephemeral=True)
             
@@ -53,7 +52,7 @@ class TradeListingModal(Modal):
             expiry_time = datetime.now() + timedelta(hours=duration)
             
             listing = {
-                "_id": f"trade_{interaction.user.id}_{int(datetime.now().timestamp())}",
+                "id": f"trade{interaction.user.id}_{int(datetime.now().timestamp())}",
                 "seller_id": interaction.user.id,
                 "seller_name": interaction.user.name,
                 "pet": self.pet_data,
@@ -95,11 +94,11 @@ class TradeListingModal(Modal):
             await interaction.response.send_message("Please enter valid numbers for price and duration.", ephemeral=True)
 
 class PetSelectView(View):
-    def __init__(self, user_data):
+    def __init__(self, user_data, owner):
         super().__init__(timeout=60)
         self.user_data = user_data
-        
         # Create a select menu with user's pets
+        self.owner = owner
         self.pet_select = Select(
             placeholder="Choose a pet to trade",
             options=[
@@ -122,7 +121,7 @@ class PetSelectView(View):
         # Show confirmation
         embed = discord.Embed(
             title="Pet Trade Confirmation",
-            description=f"You selected **{selected_pet['name']}** to trade.",
+            description=f"You selected *{selected_pet['name']}* to trade.",
             color=discord.Color.blue()
         )
         
@@ -142,6 +141,16 @@ class PetSelectView(View):
         # Create modal for price and description
         modal = TradeListingModal(selected_pet, self.user_data)
         await interaction.response.send_modal(modal)
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        # only allow the original user
+        if interaction.user.id != self.owner:
+            await interaction.response.send_message(
+                "Sorry, this menu isn’t for you.",
+                ephemeral=True
+            )
+            return False
+        return True
 
 class TradeListingView(View):
     def __init__(self, listing_id):
@@ -198,7 +207,7 @@ class TradeListingView(View):
         # 4. Send confirmation messages
         buyer_embed = discord.Embed(
             title="🎉 Purchase Successful!",
-            description=f"You purchased **{listing['pet']['name']}** for {listing['price']} coins.",
+            description=f"You purchased *{listing['pet']['name']}* for {listing['price']} coins.",
             color=discord.Color.green()
         )
         
@@ -214,7 +223,7 @@ class TradeListingView(View):
         if seller:
             seller_embed = discord.Embed(
                 title="💰 Pet Sold!",
-                description=f"Your **{listing['pet']['name']}** was purchased by {interaction.user.name} for {listing['price']} coins.",
+                description=f"Your *{listing['pet']['name']}* was purchased by {interaction.user.name} for {listing['price']} coins.",
                 color=discord.Color.gold()
             )
             try:
@@ -291,7 +300,7 @@ class BrowseTradeView(View):
             embed.add_field(
                 name=f"{pet['name']} ({pet['rarity']})",
                 value=f"💰 {listing['price']} coins | 🕒 Expires <t:{int(datetime.fromisoformat(listing['expires_at']).timestamp())}:R>\n"
-                      f"👤 Seller: {listing['seller_name']} | 🆔 ID: `{listing['_id']}`",
+                      f"👤 Seller: {listing['seller_name']} | 🆔 ID: {listing['_id']}",
                 inline=False
             )
         
@@ -383,7 +392,7 @@ class FilterModal(Modal):
             embed.add_field(
                 name=f"{pet['name']} ({pet['rarity']})",
                 value=f"💰 {listing['price']} coins | 🕒 Expires <t:{int(datetime.fromisoformat(listing['expires_at']).timestamp())}:R>\n"
-                      f"👤 Seller: {listing['seller_name']} | 🆔 ID: `{listing['_id']}`",
+                      f"👤 Seller: {listing['seller_name']} | 🆔 ID: {listing['_id']}",
                 inline=False
             )
         
@@ -461,12 +470,12 @@ def create_detailed_listing_embed(listing):
                     break
         
         if skill_info:
-            skill_text = f"**Type:** {skill_info.get('skilltype', 'Unknown')}\n"
-            skill_text += f"**Attack Type:** {skill_info.get('atktype', 'Unknown')}\n"
-            skill_text += f"**Power:** {skill_info.get('power', 0)}\n"
+            skill_text = f"*Type:* {skill_info.get('skilltype', 'Unknown')}\n"
+            skill_text += f"*Attack Type:* {skill_info.get('atktype', 'Unknown')}\n"
+            skill_text += f"*Power:* {skill_info.get('power', 0)}\n"
             
             if skill_info.get('description'):
-                skill_text += f"**Description:** {skill_info['description']}\n"
+                skill_text += f"*Description:* {skill_info['description']}\n"
             
             # Add special effects
             effects = []
@@ -488,7 +497,7 @@ def create_detailed_listing_embed(listing):
                 effects.append(f"Hits {skill_info['numInstances']} times")
             
             if effects:
-                skill_text += "**Effects:** " + ", ".join(effects)
+                skill_text += "*Effects:* " + ", ".join(effects)
             
             embed.add_field(name=move_name, value=skill_text, inline=False)
         else:
@@ -568,7 +577,7 @@ class Tradepost:
                 try:
                     listings = list(client.trade_listings.find({"status": "active"}).sort("created_at", -1))
                     if not listings:
-                        return await message.channel.send("There are no active trade listings. Use `!tradepost sell` to create one!")
+                        return await message.channel.send("There are no active trade listings. Use !tradepost sell to create one!")
 
                     view = BrowseTradeView(listings)
                     embed = discord.Embed(
@@ -587,7 +596,7 @@ class Tradepost:
                         embed.add_field(
                             name=f"{pet['name']} ({pet['rarity']})",
                             value=f"💰 {listing['price']} coins | 🕒 Expires <t:{int(datetime.fromisoformat(listing['expires_at']).timestamp())}:R>\n"
-                                  f"👤 Seller: {listing['seller_name']} | 🆔 ID: `{listing['_id']}`",
+                                  f"👤 Seller: {listing['seller_name']} | 🆔 ID: {listing['_id']}",
                             inline=False
                         )
 
@@ -602,7 +611,7 @@ class Tradepost:
             if subcommand == "sell":
                 if not user_data.get("pets"):
                     return await message.channel.send("You don't have any pets to sell.")
-                view = PetSelectView(user_data)
+                view = PetSelectView(user_data, message.author.id)
                 return await message.channel.send("Select a pet to create a trade listing:", view=view)
 
             elif subcommand == "my":
@@ -622,7 +631,7 @@ class Tradepost:
                         embed.add_field(
                             name=f"{pet['name']} ({pet['rarity']})",
                             value=f"💰 {listing['price']} coins | 🕒 Expires <t:{int(datetime.fromisoformat(listing['expires_at']).timestamp())}:R>\n"
-                                  f"🆔 ID: `{listing['_id']}`",
+                                  f"🆔 ID: {listing['_id']}",
                             inline=False
                         )
 
@@ -671,7 +680,7 @@ class Tradepost:
 
                     embed = discord.Embed(
                         title="🎉 Purchase Successful!",
-                        description=f"You purchased **{listing['pet']['name']}** for {listing['price']} coins.",
+                        description=f"You purchased *{listing['pet']['name']}* for {listing['price']} coins.",
                         color=discord.Color.green()
                     )
 
@@ -682,7 +691,7 @@ class Tradepost:
                     if seller:
                         seller_embed = discord.Embed(
                             title="💰 Pet Sold!",
-                            description=f"Your **{listing['pet']['name']}** was purchased by {message.author.name} for {listing['price']} coins.",
+                            description=f"Your *{listing['pet']['name']}* was purchased by {message.author.name} for {listing['price']} coins.",
                             color=discord.Color.gold()
                         )
                         try:
