@@ -44,7 +44,7 @@ class RenamePet:
         # find the pet object
         userPets = next(
             (p for p in userData.get("pets", [])
-            if p.get("petname", "").lower() == original_name.lower()),
+            if p.get("name", "").lower() == original_name.lower()),
             None
         )
 
@@ -69,6 +69,6 @@ class RenamePet:
         # 4) Confirm
         return await message.channel.send(
             embed=Message(
-                description=f"Your pet **{original_name}** has been renamed to **{new_name}**!"
+                description=f"Your pet *{original_name}* has been renamed to *{new_name}*!"
             )
         )
