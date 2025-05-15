@@ -3,7 +3,7 @@ import discord
 
 
 # Name the class the same as your command name preferably.
-class checkbalance:
+class CheckBalance:
 
     def __init__(self):
         # The command name. In this case this command will run when you type !test
