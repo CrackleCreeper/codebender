@@ -174,9 +174,9 @@
             ]
         
     },
-    "Water": {
+    "Fire": {
             "name": "Koh The Face Stealer",
-            "type": "Water",
+            "type": "Fire",
             "base_hp": 250,
             "attack": 80,
             "defense": 100,
@@ -258,6 +258,94 @@
                     "dodge": false,
                     "numInstances": 3,
                     "skipNextTurn": false
+                }
+            ]
+        
+    },
+    "Water": {
+            "name": "Amon",
+            "type": "Water",
+            "base_hp": 270,
+            "attack": 70,
+            "defense": 80,
+            "speed": 20,
+            "image": "./PICTURES/Amon.png",
+            "description": "Amon is a powerful politician, who's only goal is to create an 'equal world' by nullifying all bending. He is secretly a waterbending master, and is especially skilled at the art of bloodbending, which he uses to sever one's connection with their element.",
+            "moves": [
+                {
+                    "name": "Human Domination",
+                    "skilltype": "Attack",
+                    "atktype": "Basic",
+                    "description": "Amon uses his powerful combat abilities to pummel the opponent, and instill a deep sense of fear and defeat into them. This reduces their defense and attack.",
+                    "power": 30,
+                    "defreduction": 30,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 30,
+                    "heal": 0,
+                    "dodge": false, 
+                    "numInstances": 0,
+                    "skipNextTurn": false
+                },
+                {
+                    "name": "Thrum of Blood",
+                    "skilltype": "Dodge",
+                    "atktype": "Basic",
+                    "description": "Amon channels the power of blood and chi-bending, stealing the blood of the opponent to heal himself. This reduces opponent attack power, and this renewed energy allows Amon to dodge the opponent's attack.",
+                    "power": 0,
+                    "defreduction": 0,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 20,
+                    "heal": 60,
+                    "dodge": true,
+                    "numInstances": 1,
+                    "skipNextTurn": false
+                },
+                {
+                    "name": "Bloodlust",
+                    "skilltype": "Attack",
+                    "atktype": "Basic",
+                    "description": "Amon uses the power of bloodbending to slowly drain the blood of the opponent, giving him their power. This increases his stats over several turns.",
+                    "power": 15,
+                    "defreduction": 0,
+                    "defbuff": 10,
+                    "atkbuff": 10,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": false,
+                    "numInstances": 7,
+                    "skipNextTurn": false
+                },
+                {
+                    "name": "Nullify",
+                    "skilltype": "Stun",
+                    "atktype": "Burst",
+                    "description": "Amon nullifies the elemental powers of the opponent entirely, and annihilates them on the spot.",
+                    "power": 80,
+                    "defreduction": 0,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 100,
+                    "heal": 0,
+                    "dodge": false,
+                    "numInstances": 1,
+                    "skipNextTurn": true
+                },
+                {
+                    "name": "Torrent of Power",
+                    "skilltype": "Attack",
+                    "atktype": "Burst",
+                    "description": "Amon uses the power of waterbending to launch himself of a tornado of water, dodging all opponent attacks. At the same time, all opponents are sucked into the tornado, stunned, and damaged continuously for 3 turns. ",
+                    "power": 30,
+                    "defreduction": 0,
+                    "defbuff": 0,
+                    "atkbuff": 0,
+                    "atkreduction": 0,
+                    "heal": 0,
+                    "dodge": true,
+                    "numInstances": 3,
+                    "skipNextTurn": true
                 }
             ]
         
